@@ -1,23 +1,19 @@
-<div class="container mt-4">
-  <h2>Painel do Mecânico - Fluxo de Estados</h2>
+<div class="container">
+  <h2>Painel do Mecânico - Ordens de Serviço</h2>
 
   @if (carregando()) {
     <p>A carregar ordens de serviço...</p>
+  } @else if (erro()) {
+    <p class="erro">{{ erro() }}</p>
+  } @else {
+    <div class="cards-grid">
+      @for (item of ordens(); track item._id || item.id) {
+        <app-ordem-servico-card 
+          [os]="item" 
+          (statusChange)="onMudarStatus($event.id, $event.novoStatus)" />
+      } @empty {
+        <p class="mensagem-vazia">Nenhuma ordem de serviço encontrada.</p>
+      }
+    </div>
   }
-
-  @if (erro()) {
-    <div class="alert alert-danger">{{ erro() }}</div>
-  }
-
-  @if (!carregando() && ordens().length === 0) {
-    <div class="alert alert-info">Nenhuma ordem de serviço encontrada.</div>
-  }
-
-  <div class="row mt-3">
-    @for (os of ordens(); track os._id) {
-      <div class="col-md-4">
-        <app-ordem-servico-card [os]="os" (mudarStatus)="onMudarStatus(os._id, $event)" />
-      </div>
-    }
-  </div>
 </div>

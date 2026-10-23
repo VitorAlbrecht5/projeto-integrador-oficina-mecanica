@@ -2,12 +2,12 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrdemServicoService } from '../services/ordem-servico.service';
 import { OrdemServico, StatusOrdemServico } from '../ordem-servico.model';
-import { OrdemServicoCard } from '../ordem-servico-card/ordem-servico-card';
+import { OrdemServicoCardComponent } from '../ordem-servico-card/ordem-servico-card';
 
 @Component({
   selector: 'app-ordem-servico-lista',
   standalone: true,
-  imports: [CommonModule, OrdemServicoCard],
+  imports: [CommonModule, OrdemServicoCardComponent],
   templateUrl: './ordem-servico-lista.html',
   styleUrl: './ordem-servico-lista.css'
 })
@@ -36,8 +36,8 @@ export class OrdemServicoLista implements OnInit {
     });
   }
 
-  onMudarStatus(id: string, novoStatus: StatusOrdemServico) {
-    this.service.atualizarStatus(id, novoStatus).subscribe(() => {
+  onMudarStatus(id: string | number, novoStatus: StatusOrdemServico) {
+    this.service.atualizarStatus(String(id), novoStatus).subscribe(() => {
       this.carregarOrdens();
     });
   }
