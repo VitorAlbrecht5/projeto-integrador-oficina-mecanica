@@ -25,8 +25,6 @@ import { OrdemServicoService } from './features/ordem-servico/services/ordem-ser
 import { VeiculosService } from './features/veiculos/services/veiculos.service';
 import { VeiculosMockService } from './features/veiculos/services/veiculos-mock.service';
 
-import { BuscaStatusService } from './features/busca-status/services/busca-status';
-import { BuscaStatusMockService } from './features/busca-status/services/busca-status-mock.service';
 
 registerLocaleData(localePt);
 
@@ -42,6 +40,5 @@ export const appConfig: ApplicationConfig = {
     { provide: ServicoService, useClass: ServicoMockService },
     { provide: OrdemServicoService, useClass: OrdemServicoMockService },
     { provide: VeiculosService, useClass: VeiculosMockService },
-    { provide: BuscaStatusService, useClass: BuscaStatusMockService }
   ]
 };

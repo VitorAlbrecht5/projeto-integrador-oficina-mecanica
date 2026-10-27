@@ -4,11 +4,10 @@ import { PaginaPublica } from './features/pagina-publica/pagina-publica';
 import { NaoEncontrado } from './pages/nao-encontrado/nao-encontrado';
 import { OrdemServicoLista } from './features/ordem-servico/ordem-servico-lista/ordem-servico-lista';
 import { LoginComponent } from './features/login/login.component';
-
 export const routes: Routes = [
   {
     path: 'login',
-    component: LoginComponent
+    component: LoginComponent,
   },
   {
     path: '',
@@ -21,22 +20,18 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'ordem-servico',
+        redirectTo: 'relatorios',
         pathMatch: 'full',
       },
-     {
+      {
         path: 'servicos',
         loadChildren: () =>
-          import('./features/servicos/servicos.routes').then(
-            (m) => m.SERVICOS_ROUTES
-          ),
+          import('./features/servicos/servicos.routes').then((m) => m.SERVICOS_ROUTES),
       },
       {
         path: 'produtos',
         loadChildren: () =>
-          import('./features/produtos/produtos.routes').then(
-            (m) => m.PRODUTOS_ROUTES
-          ),
+          import('./features/produtos/produtos.routes').then((m) => m.PRODUTOS_ROUTES),
       },
       {
         path: 'ordem-servico',
@@ -46,30 +41,17 @@ export const routes: Routes = [
       {
         path: 'veiculos',
         loadChildren: () =>
-          import('./features/veiculos/veiculos.routes').then(
-            (m) => m.VEICULOS_ROUTES
-          ),
-      },
-      {
-        path: 'busca-status',
-        loadChildren: () =>
-          import('./features/busca-status/busca-status.routes').then(
-            (m) => m.BUSCA_STATUS_ROUTES
-          ),
+          import('./features/veiculos/veiculos.routes').then((m) => m.VEICULOS_ROUTES),
       },
       {
         path: 'relatorios',
         loadChildren: () =>
-          import('./features/relatorios/relatorios.routes').then(
-            (m) => m.RELATORIOS_ROUTES
-          ),
+          import('./features/relatorios/relatorios.routes').then((m) => m.RELATORIOS_ROUTES),
       },
       {
         path: 'cliente',
         loadChildren: () =>
-          import('./features/clientes/cliente.routes').then(
-            (m) => m.CLIENTE_ROUTES
-          ),
+          import('./features/clientes/cliente.routes').then((m) => m.CLIENTE_ROUTES),
       },
     ],
   },

@@ -1,14 +1,28 @@
-import { Component } from '@angular/core';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 
-/** Componente de layout: cabeçalho, menu lateral e área de conteúdo (PDF 02, cap. 4). */
+import { Component } from '@angular/core';
+import {
+  RouterLink,
+  RouterLinkActive,
+  RouterOutlet
+} from '@angular/router';
+
 @Component({
   selector: 'app-layout',
+  standalone: true,
   imports: [RouterOutlet, RouterLink, RouterLinkActive],
   templateUrl: './layout.html',
-  styleUrl: './layout.css',
+  styleUrl: './layout.css'
 })
 export class Layout {
-  // TODO (aula 01/02): troque pelo nome do sistema do seu grupo
-  protected readonly nomeSistema = 'Projeto Integrador';
+  nomeSistema = 'Garagem Pro';
+
+  menuAberto = false;
+
+  alternarMenu(): void {
+    this.menuAberto = !this.menuAberto;
+  }
+
+  fecharMenu(): void {
+    this.menuAberto = false;
+  }
 }

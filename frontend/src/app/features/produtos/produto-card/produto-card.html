@@ -10,7 +10,7 @@
   }
 
   <div class="acoes">
-    <a class="botao secundario" [routerLink]="['/produtos', produto()._id, 'editar']">Editar</a>
+    <a class="botao secundario" [routerLink]="['/painel/produtos', produto()._id, 'editar']">Editar</a>
     <button type="button" class="botao perigo" (click)="pedirExclusao()">Excluir</button>
   </div>
 </article>

@@ -1,3 +1,4 @@
+
 export interface Veiculo {
     _id: string;
     placa: string;
@@ -6,6 +7,7 @@ export interface Veiculo {
     ano: number;
     defeitoRelatado: string;
     status: string;
+    clienteId: number;
 }
 
 export type CriarVeiculoDTO = Omit<Veiculo, '_id'>;

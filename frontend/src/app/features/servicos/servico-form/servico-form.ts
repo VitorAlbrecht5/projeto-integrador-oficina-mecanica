@@ -35,8 +35,8 @@ export class ServicoForm {
       descricao: val.descricao!,
       preco: Number(val.preco),
       tempoEstimado: val.tempoEstimado!
-    });
+    }); 
 
-    this.router.navigate(['/servicos']);
+    this.router.navigate(['/painel/servicos']);
   }
 }

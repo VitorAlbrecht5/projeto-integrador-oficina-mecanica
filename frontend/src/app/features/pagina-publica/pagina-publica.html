@@ -52,92 +52,89 @@
             </div>
 
             @if (pesquisado) {
-            <div class="resultado">
-                @if (placaPesquisada === 'ABC-1234') {
+<div class="resultado">
+    @if (veiculo) {
 
-                <div class="placa-mercosul">
-                    <div class="placa-cabecalho">
-                        <span>PLACA:</span>
-                    </div>
+    <div class="placa-mercosul">
+        <div class="placa-cabecalho">
+            <span>PLACA:</span>
+        </div>
 
-                    <div class="placa-numero">ABC1234</div>
-                </div>
-                <div class="dados-veiculo">
-                    <p><strong>Veículo:</strong> Honda Civic</p>
-                    <!-- <p>
-                        <strong>Situação atual:</strong>
-                        <span class="situacao">Em andamento</span>
-                    </p> -->
-                </div>
+        <div class="placa-numero">{{ veiculo.placa.replace('-', '') }}</div>
+    </div>
 
+    <div class="dados-veiculo">
+        <p><strong>Veículo:</strong> {{ veiculo.modelo }}</p>
+        <!-- <p>
+            <strong>Situação atual:</strong>
+            <span class="situacao">{{ veiculo.status }}</span>
+        </p> -->
+    </div>
 
-                <div class="linha-tempo">
-                    <h3>Andamento do serviço</h3>
+    <div class="linha-tempo">
+        <h3>Andamento do serviço</h3>
 
-                    <div class="etapa concluida">
-                        <div class="etapa-ponto">✓</div>
-                        <div class="etapa-conteudo">
-                            <h4>Veículo recebido</h4>
-                            <p>Veículo foi recebido.</p>
-                        </div>
-                    </div>
-
-                    <div class="etapa concluida">
-                        <div class="etapa-ponto">✓</div>
-                        <div class="etapa-conteudo">
-                            <h4>Aguardando avaliação</h4>
-                            <p>Cadastro e avaliação inicial.</p>
-                        </div>
-                    </div>
-
-                    <div class="etapa ativa">
-                        <div class="etapa-ponto">3</div>
-                        <div class="etapa-conteudo">
-                            <h4>Em manutenção</h4>
-                            <p>O veículo está em manutenção.</p>
-                            <!-- <span class="etapa-status">Etapa atual</span> -->
-                        </div>
-                    </div>
-
-                    <div class="etapa">
-                        <div class="etapa-ponto">4</div>
-                        <div class="etapa-conteudo">
-                            <h4>Aguardando Peças</h4>
-                            <p>O serviço está parado até a chegada de peças.</p>
-                        </div>
-                    </div>
-
-                    <div class="etapa">
-                        <div class="etapa-ponto">5</div>
-                        <div class="etapa-conteudo">
-                            <h4>Pronto para retirada</h4>
-                            <p>O veículo está disponível para retirada.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <p><strong>Observação:</strong></p>
-                <p class="observacao">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                </p>
-
-
-                } @else {
-                <div class="resultado-erro">
-                    <div class="icone-erro">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                            aria-hidden="true">
-                            <path
-                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v6h2V7zm0 8h-2v2h2v-2z" />
-                        </svg>
-                    </div>
-                    <p>Não encontramos um veículo com essa placa.</p>
-                    <p>Confira a placa digitada e tente novamente.</p>
-                </div>
-
-                }
+        <div class="etapa concluida">
+            <div class="etapa-ponto">✓</div>
+            <div class="etapa-conteudo">
+                <h4>Veículo recebido</h4>
+                <p>Veículo foi recebido.</p>
             </div>
-            }
+        </div>
+
+        <div class="etapa concluida">
+            <div class="etapa-ponto">✓</div>
+            <div class="etapa-conteudo">
+                <h4>Aguardando avaliação</h4>
+                <p>Cadastro e avaliação inicial.</p>
+            </div>
+        </div>
+
+        <div class="etapa ativa">
+            <div class="etapa-ponto">3</div>
+            <div class="etapa-conteudo">
+                <h4>Em manutenção</h4>
+                <p>O veículo está em manutenção.</p>
+            </div>
+        </div>
+
+        <div class="etapa">
+            <div class="etapa-ponto">4</div>
+            <div class="etapa-conteudo">
+                <h4>Aguardando Peças</h4>
+                <p>O serviço está parado até a chegada de peças.</p>
+            </div>
+        </div>
+
+        <div class="etapa">
+            <div class="etapa-ponto">5</div>
+            <div class="etapa-conteudo">
+                <h4>Pronto para retirada</h4>
+                <p>O veículo está disponível para retirada.</p>
+            </div>
+        </div>
+    </div>
+
+    <p><strong>Observação:</strong></p>
+    <p class="observacao">
+        {{ veiculo.defeitoRelatado }}
+    </p>
+
+    } @else {
+    <div class="resultado-erro">
+        <div class="icone-erro">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                aria-hidden="true">
+                <path
+                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v6h2V7zm0 8h-2v2h2v-2z" />
+            </svg>
+        </div>
+        <p>Não encontramos um veículo com essa placa.</p>
+        <p>Confira a placa digitada e tente novamente.</p>
+    </div>
+    }
+</div>
+}
         </div>
     </section>
 

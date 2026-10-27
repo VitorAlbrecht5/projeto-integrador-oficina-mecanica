@@ -1,23 +1,74 @@
-<div class="container mt-4">
-  <h2>Painel do Mecânico - Fluxo de Estados</h2>
+
+<div class="os-painel">
+  <header class="painel-header">
+    <div>
+      <!-- <span class="eyebrow">GESTÃO DA OFICINA</span> -->
+      <h1>Ordens de Serviço</h1>
+      <p>Acompanhe os atendimentos e o andamento dos veículos.</p>
+    </div>
+  </header>
+
+  <div class="resumo-grid">
+    <div class="resumo-card">
+      <span class="resumo-label">Total de ordens</span>
+      <strong>{{ ordens().length }}</strong>
+      <span class="resumo-legenda">Atendimentos registrados</span>
+    </div>
+
+    <div class="resumo-card">
+      <span class="resumo-label">Na fila</span>
+      <strong>{{ totalNaFila }}</strong>
+      <span class="resumo-legenda">Aguardando atendimento</span>
+    </div>
+
+    <div class="resumo-card">
+      <span class="resumo-label">Em conserto</span>
+      <strong>{{ totalEmConserto }}</strong>
+      <span class="resumo-legenda">Serviços em execução</span>
+    </div>
+
+    <div class="resumo-card">
+      <span class="resumo-label">Prontos</span>
+      <strong>{{ totalProntos }}</strong>
+      <span class="resumo-legenda">Disponíveis para retirada</span>
+    </div>
+  </div>
 
   @if (carregando()) {
-    <p>A carregar ordens de serviço...</p>
+    <div class="estado-vazio">Carregando ordens de serviço...</div>
   }
 
   @if (erro()) {
-    <div class="alert alert-danger">{{ erro() }}</div>
+    <div class="mensagem-erro" role="alert">{{ erro() }}</div>
   }
 
-  @if (!carregando() && ordens().length === 0) {
-    <div class="alert alert-info">Nenhuma ordem de serviço encontrada.</div>
+  @if (!carregando() && !erro() && ordens().length === 0) {
+    <div class="estado-vazio">
+      <h2>Nenhuma ordem de serviço</h2>
+      <p>Comece criando uma ordem para um veículo cadastrado.</p>
+      <a routerLink="/painel/ordem-servico/nova" class="btn-nova">
+        Nova ordem de serviço
+      </a>
+    </div>
   }
 
-  <div class="row mt-3">
-    @for (os of ordens(); track os._id) {
-      <div class="col-md-4">
-        <app-ordem-servico-card [os]="os" (mudarStatus)="onMudarStatus(os._id, $event)" />
+  @if (!carregando() && !erro() && ordens().length > 0) {
+    <div class="lista-titulo">
+      <div>
+        <h2>Atendimentos registrados</h2>
+        <p>Consulte as ordens e atualize o andamento dos serviços.</p>
       </div>
-    }
-  </div>
+
+      <span class="contador">{{ ordens().length }} ordem(ns)</span>
+    </div>
+
+    <div class="ordens-grid">
+      @for (os of ordens(); track os._id) {
+        <app-ordem-servico-card
+          [os]="os"
+          (mudarStatus)="onMudarStatus(os._id, $event)"
+        />
+      }
+    </div>
+  }
 </div>

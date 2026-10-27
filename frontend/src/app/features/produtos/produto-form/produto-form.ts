@@ -63,7 +63,7 @@ export class ProdutoForm implements OnInit {
     const operacao = id ? this.produtosService.atualizar(id, dados) : this.produtosService.criar(dados);
 
     operacao.subscribe({
-      next: () => this.router.navigate(['/produtos']),
+      next: () => this.router.navigate(['/painel/produtos']),
       error: (e: Error) => {
         this.erro.set(e.message);
         this.salvando.set(false);

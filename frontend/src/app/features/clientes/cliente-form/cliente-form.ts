@@ -64,6 +64,6 @@ export class ClienteForm implements OnInit {
       this.clienteService.adicionarCliente(dadosCliente);
     }
 
-    this.router.navigate(['/cliente']);
+    this.router.navigate(['/painel/clientes']);
   }
 }

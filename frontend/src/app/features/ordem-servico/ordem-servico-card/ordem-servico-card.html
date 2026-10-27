@@ -1,12 +1,71 @@
-<div class="card p-3 mb-3 shadow-sm">
-  <h5>{{ os().veiculo }} - <small class="text-muted">{{ os().placa }}</small></h5>
-  <p class="mb-1"><strong>Cliente:</strong> {{ os().cliente }}</p>
-  <p class="mb-1"><strong>Problema:</strong> {{ os().descricaoProblema }}</p>
-  <p class="mb-2"><strong>Status Atual:</strong> <span class="badge bg-primary">{{ os().status }}</span></p>
-  
-  <div class="btn-group mt-2" role="group">
-    <button class="btn btn-outline-secondary btn-sm" (click)="alterar('Na Fila')">Na Fila</button>
-    <button class="btn btn-outline-warning btn-sm" (click)="alterar('Em Conserto')">Em Conserto</button>
-    <button class="btn btn-outline-success btn-sm" (click)="alterar('Pronto')">Pronto</button>
+
+<article class="os-card">
+  <header class="os-card-header">
+    <div class="os-identificacao">
+      <span
+        class="status-chip"
+        [class.status-fila]="os().status === 'Na Fila'"
+        [class.status-conserto]="os().status === 'Em Conserto'"
+        [class.status-pronto]="os().status === 'Pronto'"
+      >
+        {{ os().status }}
+      </span>
+
+      <h3>{{ os().veiculo }}</h3>
+      <p class="placa">{{ os().placa }}</p>
+    </div>
+  </header>
+
+  <div class="os-card-dados">
+    <div class="dado">
+      <span class="dado-label">Cliente</span>
+      <strong>{{ os().cliente }}</strong>
+    </div>
+
+    <div class="dado">
+      <span class="dado-label">Data de entrada</span>
+      <strong>{{ os().dataEntrada | date: 'dd/MM/yyyy' }}</strong>
+    </div>
+
+    <div class="dado problema">
+      <span class="dado-label">Problema relatado</span>
+      <p>{{ os().descricaoProblema }}</p>
+    </div>
   </div>
-</div>
+
+  <footer class="os-card-acoes">
+    <span class="acao-titulo">Status da ordem</span>
+
+    <div class="botoes-status">
+      <button
+        type="button"
+        class="btn-status"
+        [class.selecionado]="os().status === 'Na Fila'"
+        [disabled]="os().status === 'Na Fila'"
+        (click)="alterar('Na Fila')"
+      >
+        Na fila
+      </button>
+
+      <button
+        type="button"
+        class="btn-status"
+        [class.selecionado]="os().status === 'Em Conserto'"
+        [disabled]="os().status === 'Em Conserto'"
+        (click)="alterar('Em Conserto')"
+      >
+        Em conserto
+      </button>
+
+      <button
+        type="button"
+        class="btn-status"
+        [class.selecionado]="os().status === 'Pronto'"
+        [disabled]="os().status === 'Pronto'"
+        (click)="alterar('Pronto')"
+      >
+        Pronto
+      </button>
+    </div>
+  </footer>
+</article>
