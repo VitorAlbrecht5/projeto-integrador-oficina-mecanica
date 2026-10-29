@@ -17,7 +17,7 @@ import { ProdutosMockService } from './features/produtos/services/produtos-mock.
 import {
   ServicoService,
   ServicoMockService
-} from './features/servicos/servico.service';
+} from './features/servicos/servicos.service';
 
 import { OrdemServicoMockService } from './features/ordem-servico/services/ordem-servico-mock.service';
 import { OrdemServicoService } from './features/ordem-servico/services/ordem-servico.service';

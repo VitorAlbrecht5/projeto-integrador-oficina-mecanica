@@ -1,41 +1,63 @@
-<div class="container">
-  <header class="header-action">
+<div class="container-servicos">
+  <div class="header-section">
     <h2>Catálogo de Serviços e Valores</h2>
-    <a routerLink="/painel/servicos/novo" class="btn-primary">+ Novo Serviço</a>
-  </header>
+    <button class="btn-novo" (click)="abrirModalNovo()">+ Novo Serviço</button>
+  </div>
 
-  @if (carregando()) {
-    <div class="state-message">⏳ Carregando catálogo...</div>
-  } @else {
-    <div class="table-responsive">
-      <table class="styled-table">
-        <thead>
-          <tr>
-            <th>Serviço</th>
-            <th>Descrição</th>
-            <th>Preço</th>
-            <th>Tempo Estimado</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (s of servicos(); track s._id) {
-            <tr>
-              <td><strong>{{ s.nome }}</strong></td>
-              <td>{{ s.descricao }}</td>
-              <td>R$ {{ s.preco.toFixed(2) }}</td>
-              <td>{{ s.tempoEstimado }}</td>
-              <td>
-                <button class="btn-danger" (click)="excluir(s._id)">Excluir</button>
-              </td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="5" class="empty-msg">Nenhum serviço cadastrado no catálogo.</td>
-            </tr>
-          }
-        </tbody>
-      </table>
+  <table class="tabela-servicos">
+    <thead>
+      <tr>
+        <th>Serviço</th>
+        <th>Descrição</th>
+        <th>Preço</th>
+        <th>Tempo Estimado</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (s of servicos(); track s.id) {
+        <tr>
+          <td><strong>{{ s.nome }}</strong></td>
+          <td>{{ s.descricao }}</td>
+          <td>R$ {{ s.preco | number:'1.2-2' }}</td>
+          <td>{{ s.tempoEstimado }}</td>
+          <td class="acoes">
+            <button class="btn-editar" (click)="abrirModalEditar(s)">Editar</button>
+            <button class="btn-excluir" (click)="excluir(s.id)">Excluir</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  <!-- Modal de Formulário -->
+  @if (exibirModal) {
+    <div class="modal-overlay">
+      <div class="modal-content">
+        <h3>{{ modoEdicao ? 'Editar Serviço' : 'Novo Serviço' }}</h3>
+        <form [formGroup]="servicoForm" (ngSubmit)="salvar()">
+          <div class="form-group">
+            <label>Nome do Serviço *</label>
+            <input type="text" formControlName="nome" placeholder="Ex: Troca de Óleo">
+          </div>
+          <div class="form-group">
+            <label>Descrição *</label>
+            <textarea formControlName="descricao" rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Preço (R$) *</label>
+            <input type="number" formControlName="preco" step="0.01">
+          </div>
+          <div class="form-group">
+            <label>Tempo Estimado *</label>
+            <input type="text" formControlName="tempoEstimado" placeholder="Ex: 45 min">
+          </div>
+          <div class="modal-actions">
+            <button type="button" class="btn-cancelar" (click)="fecharModal()">Cancelar</button>
+            <button type="submit" class="btn-salvar">Salvar</button>
+          </div>
+        </form>
+      </div>
     </div>
   }
 </div>

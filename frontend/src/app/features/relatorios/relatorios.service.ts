@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { RelatorioOficina } from './relatorio.model';
+import { RelatorioOficina } from './relatorios.model';
 
 @Injectable({
   providedIn: 'root'
