@@ -1,12 +1,12 @@
-
 <article class="os-card">
   <header class="os-card-header">
     <div class="os-identificacao">
       <span
         class="status-chip"
-        [class.status-fila]="os().status === 'Na Fila'"
-        [class.status-conserto]="os().status === 'Em Conserto'"
-        [class.status-pronto]="os().status === 'Pronto'"
+        [class.status-recebido]="os().status === 'Veículo recebido - Aguardando Avaliação'"
+        [class.status-manutencao]="os().status === 'Em manutenção'"
+        [class.status-pecas]="os().status === 'Aguardando Peças'"
+        [class.status-pronto]="os().status === 'Pronto para retirada'"
       >
         {{ os().status }}
       </span>
@@ -34,38 +34,12 @@
   </div>
 
   <footer class="os-card-acoes">
-    <span class="acao-titulo">Status da ordem</span>
-
-    <div class="botoes-status">
-      <button
-        type="button"
-        class="btn-status"
-        [class.selecionado]="os().status === 'Na Fila'"
-        [disabled]="os().status === 'Na Fila'"
-        (click)="alterar('Na Fila')"
-      >
-        Na fila
-      </button>
-
-      <button
-        type="button"
-        class="btn-status"
-        [class.selecionado]="os().status === 'Em Conserto'"
-        [disabled]="os().status === 'Em Conserto'"
-        (click)="alterar('Em Conserto')"
-      >
-        Em conserto
-      </button>
-
-      <button
-        type="button"
-        class="btn-status"
-        [class.selecionado]="os().status === 'Pronto'"
-        [disabled]="os().status === 'Pronto'"
-        (click)="alterar('Pronto')"
-      >
-        Pronto
-      </button>
-    </div>
+    <button
+      type="button"
+      class="btn-editar"
+      (click)="abrirEdicao()"
+    >
+      Editar
+    </button>
   </footer>
 </article>

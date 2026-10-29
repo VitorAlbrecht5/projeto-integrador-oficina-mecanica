@@ -1,8 +1,9 @@
 export type StatusOrdemServico =
-  | 'Na Fila'
-  | 'Em Conserto'
-  | 'Pronto';
-
+  | 'Veículo recebido - Aguardando Avaliação'
+  | 'Em manutenção'
+  | 'Aguardando Peças'
+  | 'Pronto para retirada';
+  
 export interface OrdemServico {
   _id: string;
   veiculoId: string;

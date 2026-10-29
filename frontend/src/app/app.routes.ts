@@ -28,6 +28,14 @@ export const routes: Routes = [
         title: 'Ordens de Serviço',
       },
       {
+        path: 'ordem-servico/editar/:id',
+        loadComponent: () =>
+          import('./features/ordem-servico/ordem-servico-form/ordem-servico-form').then(
+            (m) => m.OrdemServicoForm
+          ),
+        title: 'Editar Ordem de Serviço',
+      },
+      {
         path: 'veiculos',
         loadChildren: () =>
           import('./features/veiculos/veiculos.routes').then(
