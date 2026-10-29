@@ -1,0 +1,22 @@
+<div class="login-container">
+  <h2>Acesso ao Sistema</h2>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="email">E-mail</label>
+      <input id="email" type="email" formControlName="email" placeholder="Introduza o seu e-mail" />
+      @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+        <small class="erro">Por favor, introduza um e-mail válido.</small>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="senha">Palavra-passe</label>
+      <input id="senha" type="password" formControlName="senha" placeholder="Introduza a sua palavra-passe" />
+      @if (loginForm.get('senha')?.invalid && loginForm.get('senha')?.touched) {
+        <small class="erro">A palavra-passe deve ter pelo menos 6 caracteres.</small>
+      }
+    </div>
+
+    <button type="submit" [disabled]="loginForm.invalid">Entrar</button>
+  </form>
+</div>
