@@ -1,42 +1,39 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { ServicoService } from '../servicos.service';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ServicosService } from '../servicos.service';
 
 @Component({
-  selector: 'app-servico-form',
+  selector: 'app-servicos-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
-  templateUrl: './servico-form.html',
-  styleUrls: ['./servico-form.css']
+  imports: [CommonModule, ReactiveFormsModule],
+  templateUrl: './servicos-form.html',
+  styles: [''] // Substituído styleUrls por styles vazios para evitar erro de ficheiro CSS ausente
 })
 export class ServicoForm {
+  private service = inject(ServicosService);
   private fb = inject(FormBuilder);
-  private service = inject(ServicoService);
-  private router = inject(Router);
 
-  form = this.fb.group({
-    nome: ['', [Validators.required, Validators.minLength(3)]],
-    descricao: ['', [Validators.required, Validators.minLength(5)]],
-    preco: [0, [Validators.required, Validators.min(0.01)]],
-    tempoEstimado: ['', [Validators.required]]
+  // Alterado de 'servicoForm' para 'form' para corresponder ao HTML
+  form: FormGroup = this.fb.group({
+    nome: ['', Validators.required],
+    descricao: ['', Validators.required],
+    preco: [0, [Validators.required, Validators.min(0)]],
+    tempoEstimado: ['', Validators.required]
   });
 
+  // Alterado de 'salvar' para 'onSubmit' para corresponder ao HTML
   async onSubmit() {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
+    if (this.form.invalid) return;
+    
+    const dados = this.form.value as { nome: string; descricao: string; preco: number; tempoEstimado: string };
+    
+    try {
+      this.service.adicionarServico(dados);
+      alert('Serviço salvo com sucesso!');
+      this.form.reset();
+    } catch (error) {
+      console.error('Erro ao salvar serviço:', error);
     }
-
-    const val = this.form.value;
-    await this.service.criar({
-      nome: val.nome!,
-      descricao: val.descricao!,
-      preco: Number(val.preco),
-      tempoEstimado: val.tempoEstimado!
-    }); 
-
-    this.router.navigate(['/painel/servicos']);
   }
 }
