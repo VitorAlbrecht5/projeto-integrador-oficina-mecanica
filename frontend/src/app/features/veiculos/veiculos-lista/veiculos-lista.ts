@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { VeiculosService } from '../services/veiculos.service';
 import { Veiculo } from '../veiculo.model';
 import { VeiculoCardComponent } from '../veiculo-card/veiculo-card';
+import { ClienteService } from '../../clientes/cliente.service';
 
 @Component({
   selector: 'app-veiculos-lista',
@@ -15,7 +16,8 @@ import { VeiculoCardComponent } from '../veiculo-card/veiculo-card';
 })
 export class VeiculosListaComponent implements OnInit {
   private veiculosService = inject(VeiculosService);
-  
+  private clienteService = inject(ClienteService);
+
   veiculos = signal<Veiculo[]>([]);
   carregando = signal<boolean>(true);
   erroAoCarregar = signal<string | null>(null);
@@ -55,5 +57,13 @@ export class VeiculosListaComponent implements OnInit {
   aoDigitarBusca(evento: any) {
     this.termoBusca.set(evento.target.value);
   }
+
+  nomeCliente(clienteId: number): string {
+  const cliente = this.clienteService
+    .obterClientes()
+    .find(c => c.id === clienteId);
+
+  return cliente?.nomeCompleto ?? 'Cliente não encontrado';
+}
 }
 

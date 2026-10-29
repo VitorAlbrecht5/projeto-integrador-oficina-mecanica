@@ -8,38 +8,61 @@ import { Veiculo, CriarVeiculoDTO } from '../veiculo.model';
   providedIn: 'root',
 })
 export class VeiculosMockService implements VeiculosService {
-  private veiculos: Veiculo[] = [
-    {
-      _id: '1',
-      placa: 'ABC-1234',
-      modelo: 'Gol',
-      cor: 'Branco',
-      ano: 2015,
-      defeitoRelatado: 'Motor falhando',
-      status: 'Na Fila',
-      clienteId: 1,
-    },
-    {
-      _id: '2',
-      placa: 'XYZ-9876',
-      modelo: 'Civic',
-      cor: 'Preto',
-      ano: 2020,
-      defeitoRelatado: 'Troca de óleo',
-      status: 'Em Conserto',
-      clienteId: 2,
-    },
-    {
-      _id: '3',
-      placa: 'DEF-5678',
-      modelo: 'Onix',
-      cor: 'Prata',
-      ano: 2022,
-      defeitoRelatado: 'Bateria descarregada',
-      status: 'Pronto',
-      clienteId: 1,
-    },
-  ];
+ private veiculos: Veiculo[] = [
+  {
+    _id: '1',
+    placa: 'ABC-1234',
+    modelo: 'Gol',
+    cor: 'Branco',
+    ano: 2015,
+    defeitoRelatado: 'Motor falhando',
+    status: 'Na Fila',
+    clienteId: 1,
+  },
+  {
+    _id: '2',
+    placa: 'XYZ-9876',
+    modelo: 'Civic',
+    cor: 'Preto',
+    ano: 2020,
+    defeitoRelatado: 'Troca de óleo',
+    status: 'Em Conserto',
+    clienteId: 2,
+    imagemUrl: 'https://i.imgur.com/n9PA1de.jpeg',
+  },
+  {
+    _id: '3',
+    placa: 'DEF-5678',
+    modelo: 'Onix',
+    cor: 'Prata',
+    ano: 2022,
+    defeitoRelatado: 'Bateria descarregada',
+    status: 'Pronto',
+    clienteId: 1,
+  },
+  {
+    _id: '4',
+    placa: 'GHI-1234',
+    modelo: 'Ford Escort Hobby',
+    cor: 'Vermelho',
+    ano: 1995,
+    defeitoRelatado: 'Revisão do sistema de freios',
+    status: 'Na Fila',
+    clienteId: 3,
+    imagemUrl: 'https://i.imgur.com/NXcqoGC.jpeg',
+  },
+  {
+    _id: '5',
+    placa: 'JKL-5678',
+    modelo: 'Toyota Corolla',
+    cor: 'Cinza',
+    ano: 2023,
+    defeitoRelatado: 'Manutenção preventiva',
+    status: 'Em Conserto',
+    clienteId: 4,
+    imagemUrl: 'https://i.imgur.com/SBDVqJz.jpeg',
+  },
+];
 
   listar(): Observable<Veiculo[]> {
     return of([...this.veiculos]).pipe(delay(500));

@@ -1,27 +1,61 @@
-<div class="card" (click)="aoClicar()">
-    <h3>Placa: {{ veiculo().placa }}</h3>
+<article class="veiculo-card">
+    <header class="veiculo-card-header">
+        <div class="veiculo-identificacao">
+            <span class="status-chip" [class.status-fila]="veiculo().status === 'Na Fila'"
+                [class.status-conserto]="veiculo().status === 'Em Conserto'"
+                [class.status-pronto]="veiculo().status === 'Pronto'" [class.status-outro]="
+          veiculo().status !== 'Na Fila' &&
+          veiculo().status !== 'Em Conserto' &&
+          veiculo().status !== 'Pronto'
+        ">
+                {{ veiculo().status }}
+            </span>
 
-    <p><strong>Modelo:</strong> {{ veiculo().modelo }} ({{ veiculo().cor }})</p>
+            <h3>{{ veiculo().modelo }}</h3>
+            <p class="placa">{{ veiculo().placa }}</p>
+        </div>
+    </header>
 
-    <p><strong>Defeito:</strong> {{ veiculo().defeitoRelatado }}</p>
+    <div class="veiculo-card-dados">
+        <div class="imagem-veiculo">
+            @if (veiculo().imagemUrl && !imagemComErro()) {
+            <img [src]="veiculo().imagemUrl" [alt]="'Imagem do veículo ' + veiculo().modelo"
+                (error)="imagemComErro.set(true)" />
+            } @else {
+            <img src="/assets/img/veiculo-placeholder.webp" alt="Imagem não disponível para este veículo" />
+            }
+        </div>
+        <div class="dado">
+            <span class="dado-label">Cliente</span>
+            <strong>{{ clienteNome() }}</strong>
+        </div>
 
-    <p>
-        <strong>Status:</strong>
-        <span class="status">
-            {{ veiculo().status }}
-        </span>
-    </p>
+        <div class="dados-veiculo">
+            <div class="dado">
+                <span class="dado-label">Ano</span>
+                <strong>{{ veiculo().ano }}</strong>
+            </div>
 
-    <button type="button" class="botao-editar" (click)="$event.stopPropagation(); editar()">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-            <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
-            <g id="SVGRepo_iconCarrier">
-                <path fill-rule="evenodd" clip-rule="evenodd"
-                    d="M20.8477 1.87868C19.6761 0.707109 17.7766 0.707105 16.605 1.87868L2.44744 16.0363C2.02864 16.4551 1.74317 16.9885 1.62702 17.5692L1.03995 20.5046C0.760062 21.904 1.9939 23.1379 3.39334 22.858L6.32868 22.2709C6.90945 22.1548 7.44285 21.8693 7.86165 21.4505L22.0192 7.29289C23.1908 6.12132 23.1908 4.22183 22.0192 3.05025L20.8477 1.87868ZM18.0192 3.29289C18.4098 2.90237 19.0429 2.90237 19.4335 3.29289L20.605 4.46447C20.9956 4.85499 20.9956 5.48815 20.605 5.87868L17.9334 8.55027L15.3477 5.96448L18.0192 3.29289ZM13.9334 7.3787L3.86165 17.4505C3.72205 17.5901 3.6269 17.7679 3.58818 17.9615L3.00111 20.8968L5.93645 20.3097C6.13004 20.271 6.30784 20.1759 6.44744 20.0363L16.5192 9.96448L13.9334 7.3787Z"
-                    fill="#0F0F0F"></path>
-            </g>
-        </svg>
-        Editar
-    </button>
-</div>
+            <div class="dado">
+                <span class="dado-label">Cor</span>
+                <strong>{{ veiculo().cor }}</strong>
+            </div>
+        </div>
+
+        <div class="dado problema">
+            <span class="dado-label">Defeito relatado</span>
+            <p>{{ veiculo().defeitoRelatado }}</p>
+        </div>
+    </div>
+
+    <footer class="veiculo-card-acoes">
+        <button type="button" class="btn-editar" (click)="editar()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 20h9" />
+                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
+            </svg>
+            Editar veículo
+        </button>
+    </footer>
+</article>

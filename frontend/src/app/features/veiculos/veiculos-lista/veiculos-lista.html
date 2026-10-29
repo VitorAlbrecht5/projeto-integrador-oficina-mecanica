@@ -1,15 +1,9 @@
-
 <div class="container">
   <h2>Veículos na Oficina</h2>
 
   <div class="barra-acoes">
-    <input
-      type="text"
-      [value]="termoBusca()"
-      (input)="aoDigitarBusca($event)"
-      placeholder="Buscar por placa ou modelo..."
-      class="campo-busca"
-    >
+    <input type="text" [value]="termoBusca()" (input)="aoDigitarBusca($event)"
+      placeholder="Buscar por placa ou modelo..." class="campo-busca">
 
     <button routerLink="novo" class="botao-novo">
       + Novo Veículo
@@ -17,33 +11,33 @@
   </div>
 
   @if (carregando()) {
-    <div class="mensagem-carregando">
-      <p>⏳ A carregar os veículos, por favor aguarde...</p>
-    </div>
+  <div class="mensagem-carregando">
+    <p>⏳ A carregar os veículos, por favor aguarde...</p>
+  </div>
   }
 
   @else if (erroAoCarregar()) {
-    <div class="mensagem-erro">
-      <p>❌ {{ erroAoCarregar() }}</p>
-      <button (click)="carregarVeiculos()" class="botao-tentar">
-        Tentar Novamente
-      </button>
-    </div>
+  <div class="mensagem-erro">
+    <p>❌ {{ erroAoCarregar() }}</p>
+    <button (click)="carregarVeiculos()" class="botao-tentar">
+      Tentar Novamente
+    </button>
+  </div>
   }
 
   @else {
-    @if (veiculosFiltrados().length === 0) {
-      <div class="mensagem-vazia">
-        <p>Nenhum veículo encontrado com estes filtros.</p>
-      </div>
-    }
+  @if (veiculosFiltrados().length === 0) {
+  <div class="mensagem-vazia">
+    <p>Nenhum veículo encontrado com estes filtros.</p>
+  </div>
+  }
 
-    @else {
-      <div class="lista">
-        @for (carro of veiculosFiltrados(); track carro._id) {
-          <app-veiculo-card [veiculo]="carro"></app-veiculo-card>
-        }
-      </div>
+  @else {
+  <div class="lista">
+    @for (carro of veiculosFiltrados(); track carro._id) {
+    <app-veiculo-card [veiculo]="carro" [clienteNome]="nomeCliente(carro.clienteId)" />
     }
+  </div>
+  }
   }
 </div>

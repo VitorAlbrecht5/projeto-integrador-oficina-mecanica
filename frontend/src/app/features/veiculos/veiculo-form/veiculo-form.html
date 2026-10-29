@@ -1,15 +1,25 @@
-
 <div class="container" style="max-width: 600px; margin: 0 auto; padding: 20px;">
-  <h2>Novo Veículo</h2>
+  <h2>{{ modoEdicao ? 'Editar Veículo' : 'Novo Veículo' }}</h2>
+
+  @if (carregando) {
+  <p>Carregando dados do veículo...</p>
+  }
+
+  @if (erro) {
+  <p role="alert" style="color: red;">{{ erro }}</p>
+  }
 
   <form [formGroup]="form" (ngSubmit)="salvar()">
 
     <div class="campo" style="margin-bottom: 15px;">
       <label for="placa">Placa *</label>
-      <input id="placa" type="text" formControlName="placa" style="width: 100%; padding: 8px;">
+      <input id="placa" type="text" formControlName="placa" style="width: 100%; padding: 8px;" />
 
+      @if (modoEdicao) {
+      <small>A placa não pode ser alterada.</small>
+      }
       @if (form.get('placa')?.invalid && form.get('placa')?.touched) {
-        <small style="color: red; display: block; margin-top: 5px;">A placa é obrigatória.</small>
+      <small style="color: red; display: block; margin-top: 5px;">A placa é obrigatória.</small>
       }
     </div>
 
@@ -18,18 +28,18 @@
       <select id="clienteId" formControlName="clienteId" style="width: 100%; padding: 8px;">
         <option [ngValue]="null">Selecione o proprietário</option>
         @for (cliente of clientes; track cliente.id) {
-          <option [ngValue]="cliente.id">
-            {{ cliente.nomeCompleto }} — {{ cliente.cpf }}
-          </option>
+        <option [ngValue]="cliente.id">
+          {{ cliente.nomeCompleto }} — {{ cliente.cpf }}
+        </option>
         }
       </select>
 
       @if (form.get('clienteId')?.invalid && form.get('clienteId')?.touched) {
-        <small style="color: red; display: block; margin-top: 5px;">Selecione um proprietário.</small>
+      <small style="color: red; display: block; margin-top: 5px;">Selecione um proprietário.</small>
       }
 
       @if (clientes.length === 0) {
-        <small style="color: red; display: block; margin-top: 5px;">Nenhum cliente cadastrado.</small>
+      <small style="color: red; display: block; margin-top: 5px;">Nenhum cliente cadastrado.</small>
       }
     </div>
 
@@ -38,8 +48,19 @@
       <input id="modelo" type="text" formControlName="modelo" style="width: 100%; padding: 8px;">
 
       @if (form.get('modelo')?.invalid && form.get('modelo')?.touched) {
-        <small style="color: red; display: block; margin-top: 5px;">O modelo é obrigatório.</small>
+      <small style="color: red; display: block; margin-top: 5px;">O modelo é obrigatório.</small>
       }
+    </div>
+
+    <div class="campo" style="margin-bottom: 15px;">
+      <label for="imagemUrl">URL da imagem (opcional)</label>
+
+      <input id="imagemUrl" type="url" formControlName="imagemUrl" placeholder="https://exemplo.com/imagem-do-carro.jpg"
+        style="width: 100%; padding: 8px;" />
+
+      <small>
+        Cole o link de uma imagem do veículo.
+      </small>
     </div>
 
     <div class="campo" style="margin-bottom: 15px;">
@@ -47,7 +68,7 @@
       <input id="cor" type="text" formControlName="cor" style="width: 100%; padding: 8px;">
 
       @if (form.get('cor')?.invalid && form.get('cor')?.touched) {
-        <small style="color: red; display: block; margin-top: 5px;">A cor é obrigatória.</small>
+      <small style="color: red; display: block; margin-top: 5px;">A cor é obrigatória.</small>
       }
     </div>
 
@@ -56,30 +77,37 @@
       <input id="ano" type="number" formControlName="ano" style="width: 100%; padding: 8px;">
 
       @if (form.get('ano')?.invalid && form.get('ano')?.touched) {
-        <small style="color: red; display: block; margin-top: 5px;">
-          @if (form.get('ano')?.hasError('required')) { O ano é obrigatório. }
-          @if (form.get('ano')?.hasError('min')) { O ano deve ser maior que 1950. }
-          @if (form.get('ano')?.hasError('max')) { O ano não pode ser no futuro. }
-        </small>
+      <small style="color: red; display: block; margin-top: 5px;">
+        @if (form.get('ano')?.hasError('required')) { O ano é obrigatório. }
+        @if (form.get('ano')?.hasError('min')) { O ano deve ser maior que 1950. }
+        @if (form.get('ano')?.hasError('max')) { O ano não pode ser no futuro. }
+      </small>
       }
     </div>
 
     <div class="campo" style="margin-bottom: 20px;">
       <label for="defeitoRelatado">Defeito Relatado *</label>
-      <textarea id="defeitoRelatado" formControlName="defeitoRelatado" rows="3" style="width: 100%; padding: 8px;"></textarea>
+      <textarea id="defeitoRelatado" formControlName="defeitoRelatado" rows="3"
+        style="width: 100%; padding: 8px;"></textarea>
 
       @if (form.get('defeitoRelatado')?.invalid && form.get('defeitoRelatado')?.touched) {
-        <small style="color: red; display: block; margin-top: 5px;">O defeito relatado é obrigatório.</small>
+      <small style="color: red; display: block; margin-top: 5px;">O defeito relatado é obrigatório.</small>
       }
     </div>
 
     <div class="acoes" style="display: flex; gap: 10px; justify-content: flex-end;">
-      <button type="button" routerLink="/painel/veiculos" [disabled]="salvando" style="padding: 10px 20px; cursor: pointer;">
+      <button type="button" routerLink="/painel/veiculos" [disabled]="salvando"
+        style="padding: 10px 20px; cursor: pointer;">
         Cancelar
       </button>
 
-      <button type="submit" [disabled]="salvando || clientes.length === 0" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer;">
-        @if (salvando) { Salvando... } @else { Salvar Veículo }
+      <button type="submit" [disabled]="salvando || carregando || clientes.length === 0"
+        style="padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer;">
+        @if (salvando) {
+        Salvando...
+        } @else {
+        {{ modoEdicao ? 'Salvar Alterações' : 'Salvar Veículo' }}
+        }
       </button>
     </div>
 

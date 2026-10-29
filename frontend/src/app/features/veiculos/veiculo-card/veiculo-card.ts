@@ -1,4 +1,5 @@
-import { Component, inject, input, output } from '@angular/core';
+
+import { Component, inject, input, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Veiculo } from '../veiculo.model';
@@ -8,19 +9,19 @@ import { Veiculo } from '../veiculo.model';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './veiculo-card.html',
-  styleUrls: ['./veiculo-card.css']
+  styleUrl: './veiculo-card.css',
 })
 export class VeiculoCardComponent {
   private readonly router = inject(Router);
+
   veiculo = input.required<Veiculo>();
-
-  clicado = output<Veiculo>();
-
-  aoClicar() {
-    this.clicado.emit(this.veiculo());
-  }
-
-  editar() {
-    this.router.navigate(['/painel/veiculos', this.veiculo()._id, 'editar']);
+  clienteNome = input('Cliente não encontrado');
+  imagemComErro = signal(false);
+  
+  editar(): void {
+    this.router.navigate([
+      '/painel/veiculos/editar',
+      this.veiculo()._id,
+    ]);
   }
 }
