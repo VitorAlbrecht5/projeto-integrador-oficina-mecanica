@@ -7,7 +7,8 @@ export interface Veiculo {
   defeitoRelatado: string;
   status: string;
   clienteId: number;
+  ativo: boolean;
   imagemUrl?: string;
 }
 
-export type CriarVeiculoDTO = Omit<Veiculo, '_id'>;
+export type CriarVeiculoDTO = Omit<Veiculo, '_id' | 'ativo'>;

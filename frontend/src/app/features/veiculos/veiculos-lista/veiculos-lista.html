@@ -35,7 +35,7 @@
   @else {
   <div class="lista">
     @for (carro of veiculosFiltrados(); track carro._id) {
-    <app-veiculo-card [veiculo]="carro" [clienteNome]="nomeCliente(carro.clienteId)" />
+    <app-veiculo-card [veiculo]="carro" [clienteNome]="nomeCliente(carro.clienteId)" (excluir)="excluirVeiculo($event)" />
     }
   </div>
   }

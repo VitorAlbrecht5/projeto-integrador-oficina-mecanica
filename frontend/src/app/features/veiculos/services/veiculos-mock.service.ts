@@ -18,6 +18,7 @@ export class VeiculosMockService implements VeiculosService {
     defeitoRelatado: 'Motor falhando',
     status: 'Na Fila',
     clienteId: 1,
+    ativo: true,
   },
   {
     _id: '2',
@@ -29,6 +30,7 @@ export class VeiculosMockService implements VeiculosService {
     status: 'Em Conserto',
     clienteId: 2,
     imagemUrl: 'https://i.imgur.com/n9PA1de.jpeg',
+    ativo: true
   },
   {
     _id: '3',
@@ -39,6 +41,7 @@ export class VeiculosMockService implements VeiculosService {
     defeitoRelatado: 'Bateria descarregada',
     status: 'Pronto',
     clienteId: 1,
+    ativo: true
   },
   {
     _id: '4',
@@ -50,6 +53,7 @@ export class VeiculosMockService implements VeiculosService {
     status: 'Na Fila',
     clienteId: 3,
     imagemUrl: 'https://i.imgur.com/NXcqoGC.jpeg',
+    ativo: true
   },
   {
     _id: '5',
@@ -61,6 +65,7 @@ export class VeiculosMockService implements VeiculosService {
     status: 'Em Conserto',
     clienteId: 4,
     imagemUrl: 'https://i.imgur.com/SBDVqJz.jpeg',
+    ativo: true
   },
 ];
 
@@ -79,15 +84,16 @@ export class VeiculosMockService implements VeiculosService {
   }
 
   criar(dto: CriarVeiculoDTO): Observable<Veiculo> {
-    const novo: Veiculo = {
-      ...dto,
-      _id: Date.now().toString(),
-      status: 'Na Fila',
-    };
+  const novo: Veiculo = {
+    ...dto,
+    _id: Date.now().toString(),
+    status: 'Na Fila',
+    ativo: true,
+  };
 
-    this.veiculos.push(novo);
-    return of({ ...novo }).pipe(delay(500));
-  }
+  this.veiculos.push(novo);
+  return of({ ...novo }).pipe(delay(500));
+}
 
   atualizar(id: string, dados: Partial<Veiculo>): Observable<Veiculo> {
     const index = this.veiculos.findIndex((v) => v._id === id);
@@ -105,9 +111,14 @@ export class VeiculosMockService implements VeiculosService {
   }
 
   excluir(id: string): Observable<void> {
-    this.veiculos = this.veiculos.filter((v) => v._id !== id);
-    return of(undefined).pipe(delay(500));
+  const veiculo = this.veiculos.find((v) => v._id === id);
+
+  if (veiculo) {
+    veiculo.ativo = false;
   }
+
+  return of(undefined).pipe(delay(500));
+}
 
   buscarPorPlaca(placa: string): Observable<Veiculo | undefined> {
     const placaNormalizada = placa.replace(/-/g, '').toUpperCase();
