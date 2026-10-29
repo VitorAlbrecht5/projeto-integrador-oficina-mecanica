@@ -1,6 +1,8 @@
+
 <div class="os-painel">
   <header class="painel-header">
     <div>
+      <!-- <span class="eyebrow">GESTÃO DA OFICINA</span> -->
       <h1>Ordens de Serviço</h1>
       <p>Acompanhe os atendimentos e o andamento dos veículos.</p>
     </div>
@@ -14,21 +16,15 @@
     </div>
 
     <div class="resumo-card">
-      <span class="resumo-label">Aguardando Avaliação</span>
-      <strong>{{ totalRecebidos }}</strong>
-      <span class="resumo-legenda">Veículos recebidos</span>
+      <span class="resumo-label">Na fila</span>
+      <strong>{{ totalNaFila }}</strong>
+      <span class="resumo-legenda">Aguardando atendimento</span>
     </div>
 
     <div class="resumo-card">
-      <span class="resumo-label">Em manutenção</span>
-      <strong>{{ totalEmManutencao }}</strong>
+      <span class="resumo-label">Em conserto</span>
+      <strong>{{ totalEmConserto }}</strong>
       <span class="resumo-legenda">Serviços em execução</span>
-    </div>
-
-    <div class="resumo-card">
-      <span class="resumo-label">Aguardando Peças</span>
-      <strong>{{ totalAguardandoPecas }}</strong>
-      <span class="resumo-legenda">A espera de componentes</span>
     </div>
 
     <div class="resumo-card">
@@ -70,7 +66,7 @@
       @for (os of ordens(); track os._id) {
         <app-ordem-servico-card
           [os]="os"
-          (editar)="abrirFormularioEdicao($event)"
+          (mudarStatus)="onMudarStatus(os._id, $event)"
         />
       }
     </div>
