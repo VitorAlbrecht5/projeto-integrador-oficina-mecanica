@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { VeiculosService } from '../services/veiculos.service';
 import { Veiculo } from '../veiculo.model';
 import { VeiculoCardComponent } from '../veiculo-card/veiculo-card';
+import { ClienteService } from '../../clientes/cliente.service';
 
 @Component({
   selector: 'app-veiculos-lista',
@@ -15,17 +16,18 @@ import { VeiculoCardComponent } from '../veiculo-card/veiculo-card';
 })
 export class VeiculosListaComponent implements OnInit {
   private veiculosService = inject(VeiculosService);
-  
+  private clienteService = inject(ClienteService);
+
   veiculos = signal<Veiculo[]>([]);
   carregando = signal<boolean>(true);
   erroAoCarregar = signal<string | null>(null);
-  
+
   termoBusca = signal<string>('');
 
   veiculosFiltrados = computed(() => {
     const lista = this.veiculos();
     const termo = this.termoBusca().toLowerCase();
-    return lista.filter(v => 
+    return lista.filter(v =>
       v.placa.toLowerCase().includes(termo) ||
       v.modelo.toLowerCase().includes(termo)
     );
@@ -54,6 +56,35 @@ export class VeiculosListaComponent implements OnInit {
 
   aoDigitarBusca(evento: any) {
     this.termoBusca.set(evento.target.value);
+  }
+
+  nomeCliente(clienteId: number): string {
+    const cliente = this.clienteService
+      .obterClientes()
+      .find(c => c.id === clienteId);
+
+    return cliente?.nomeCompleto ?? 'Cliente não encontrado';
+  }
+
+  excluirVeiculo(veiculo: Veiculo) {
+    const confirmar = window.confirm(
+      `Deseja realmente inativar o veículo ${veiculo.modelo}, placa ${veiculo.placa}?`
+    );
+
+    if (!confirmar) {
+      return;
+    }
+
+    this.veiculosService.excluir(veiculo._id).subscribe({
+      next: () => {
+        alert('Veículo inativado com sucesso!');
+        this.carregarVeiculos();
+      },
+      error: (erro) => {
+        console.error('Erro ao inativar veículo:', erro);
+        alert('Não foi possível inativar o veículo.');
+      },
+    });
   }
 }
 
