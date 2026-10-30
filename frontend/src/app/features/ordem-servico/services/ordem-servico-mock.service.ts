@@ -5,7 +5,7 @@ import {
   OrdemServico,
   OrdemServicoInput,
   StatusOrdemServico,
-} from '../ordem-servico-card/ordem-servico.model';
+} from '../ordem-servico.model';
 
 import { OrdemServicoService } from './ordem-servico.service';
 
@@ -19,7 +19,7 @@ export class OrdemServicoMockService implements OrdemServicoService {
       veiculoId: '1',
       clienteId: 1,
       descricaoProblema: 'Motor falhando',
-      status: 'Veículo recebido - Aguardando Avaliação',
+      status: 'Na Fila',
       dataEntrada: '2026-10-21',
     },
     {
@@ -27,7 +27,7 @@ export class OrdemServicoMockService implements OrdemServicoService {
       veiculoId: '2',
       clienteId: 2,
       descricaoProblema: 'Troca de óleo',
-      status: 'Em manutenção',
+      status: 'Em Conserto',
       dataEntrada: '2026-10-22',
     },
     {
@@ -35,7 +35,7 @@ export class OrdemServicoMockService implements OrdemServicoService {
       veiculoId: '3',
       clienteId: 1,
       descricaoProblema: 'Bateria descarregada',
-      status: 'Pronto para retirada',
+      status: 'Pronto',
       dataEntrada: '2026-10-23',
     },
   ]);

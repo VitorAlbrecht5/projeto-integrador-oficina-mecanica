@@ -1,21 +1,23 @@
-import { Component, input, inject } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-import { OrdemServicoExibicao } from './ordem-servico.model';
+import { Component, input, output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+import {
+  OrdemServicoExibicao,
+  StatusOrdemServico,
+} from '../ordem-servico.model';
 
 @Component({
   selector: 'app-ordem-servico-card',
   standalone: true,
-  imports: [CommonModule, RouterModule, DatePipe],
+  imports: [CommonModule],
   templateUrl: './ordem-servico-card.html',
-  styleUrls: ['./ordem-servico-card.css']
+  styleUrl: './ordem-servico-card.css',
 })
 export class OrdemServicoCard {
   os = input.required<OrdemServicoExibicao>();
-  private router = inject(Router);
+  mudarStatus = output<StatusOrdemServico>();
 
-  abrirEdicao() {
-    const id = this.os()._id;
-    this.router.navigate(['/ordem-servico/editar', id]);
+  alterar(status: StatusOrdemServico): void {
+    this.mudarStatus.emit(status);
   }
 }

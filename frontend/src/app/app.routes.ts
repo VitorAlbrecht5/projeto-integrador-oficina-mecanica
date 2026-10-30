@@ -1,26 +1,37 @@
 import { Routes } from '@angular/router';
 import { Layout } from './layout/layout';
-import { Inicio } from './pages/inicio/inicio';
+import { PaginaPublica } from './features/pagina-publica/pagina-publica';
 import { NaoEncontrado } from './pages/nao-encontrado/nao-encontrado';
 import { OrdemServicoLista } from './features/ordem-servico/ordem-servico-lista/ordem-servico-lista';
-import { Login } from './features/login/login';
-
-/**
- * Mapa de rotas da aplicação.
- */
+import { LoginComponent } from './features/login/login.component';
 export const routes: Routes = [
   {
+    path: 'login',
+    component: LoginComponent,
+  },
+  {
     path: '',
+    component: PaginaPublica,
+    title: 'Garagem Pro',
+  },
+  {
+    path: 'painel',
     component: Layout,
     children: [
-      { path: '', component: Inicio, title: 'Início' },
-      { path: 'login', component: Login, title: 'Login' },
+      {
+        path: '',
+        redirectTo: 'relatorios',
+        pathMatch: 'full',
+      },
+      {
+        path: 'servicos',
+        loadChildren: () =>
+          import('./features/servicos/servicos.routes').then((m) => m.SERVICOS_ROUTES),
+      },
       {
         path: 'produtos',
         loadChildren: () =>
-          import('./features/produtos/produtos.routes').then(
-            (m) => m.PRODUTOS_ROUTES
-          ),
+          import('./features/produtos/produtos.routes').then((m) => m.PRODUTOS_ROUTES),
       },
       {
         path: 'ordem-servico',
@@ -28,21 +39,25 @@ export const routes: Routes = [
         title: 'Ordens de Serviço',
       },
       {
-        path: 'ordem-servico/editar/:id',
-        loadComponent: () =>
-          import('./features/ordem-servico/ordem-servico-form/ordem-servico-form').then(
-            (m) => m.OrdemServicoForm
-          ),
-        title: 'Editar Ordem de Serviço',
-      },
-      {
         path: 'veiculos',
         loadChildren: () =>
-          import('./features/veiculos/veiculos.routes').then(
-            (m) => m.VEICULOS_ROUTES
-          ),
+          import('./features/veiculos/veiculos.routes').then((m) => m.VEICULOS_ROUTES),
+      },
+      {
+        path: 'relatorios',
+        loadChildren: () =>
+          import('./features/relatorios/relatorios.routes').then((m) => m.RELATORIOS_ROUTES),
+      },
+      {
+        path: 'cliente',
+        loadChildren: () =>
+          import('./features/clientes/cliente.routes').then((m) => m.CLIENTE_ROUTES),
       },
     ],
   },
-  { path: '**', component: NaoEncontrado, title: 'Página não encontrada' },
+  {
+    path: '**',
+    component: NaoEncontrado,
+    title: 'Página não encontrada',
+  },
 ];
