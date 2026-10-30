@@ -1,4 +1,3 @@
-
 import {
   ApplicationConfig,
   provideZoneChangeDetection,
@@ -14,10 +13,8 @@ import { routes } from './app.routes';
 import { ProdutosService } from './features/produtos/services/produtos.service';
 import { ProdutosMockService } from './features/produtos/services/produtos-mock.service';
 
-import {
-  ServicoService,
-  ServicoMockService
-} from './features/servicos/servico.service';
+// Corrigido para ServicosService (com "s" no final)
+import { ServicosService } from './features/servicos/servicos.service';
 
 import { OrdemServicoMockService } from './features/ordem-servico/services/ordem-servico-mock.service';
 import { OrdemServicoService } from './features/ordem-servico/services/ordem-servico.service';
@@ -37,7 +34,11 @@ export const appConfig: ApplicationConfig = {
     { provide: LOCALE_ID, useValue: 'pt-BR' },
 
     { provide: ProdutosService, useClass: ProdutosMockService },
-    { provide: ServicoService, useClass: ServicoMockService },
+    
+    // Como o seu ServicosService usa dados locais simulados diretamente na classe, 
+    // basta registrá-lo diretamente aqui sem precisar de um Mock separado:
+    ServicosService, 
+
     { provide: OrdemServicoService, useClass: OrdemServicoMockService },
     { provide: VeiculosService, useClass: VeiculosMockService },
   ]

@@ -1,38 +1,68 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { ServicoService } from '../servico.service';
-import { Servico } from '../servico.model';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ServicosService } from '../servicos.service';
+import { Servico } from '../servicos.model';
 
 @Component({
   selector: 'app-servicos-lista',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './servicos-lista.html',
   styleUrls: ['./servicos-lista.css']
 })
-export class ServicosLista implements OnInit {
-  private servicoService = inject(ServicoService);
+export class ServicosLista {
+  private servicosService = inject(ServicosService);
+  private fb = inject(FormBuilder);
 
-  servicos = signal<Servico[]>([]);
-  carregando = signal<boolean>(true);
+  servicos = signal<Servico[]>(this.servicosService.obterServicos());
+  exibirModal = false;
+  modoEdicao = false;
+  servicoIdEdicao: number | null = null;
 
-  async ngOnInit() {
-    await this.carregar();
+  servicoForm: FormGroup = this.fb.group({
+    nome: ['', [Validators.required]],
+    descricao: ['', [Validators.required]],
+    preco: ['', [Validators.required, Validators.min(0)]],
+    tempoEstimado: ['', [Validators.required]]
+  });
+
+  abrirModalNovo() {
+    this.modoEdicao = false;
+    this.servicoIdEdicao = null;
+    this.servicoForm.reset();
+    this.exibirModal = true;
   }
 
-  async carregar() {
-    this.carregando.set(true);
-    const lista = await this.servicoService.listar();
-    this.servicos.set(lista);
-    this.carregando.set(false);
+  abrirModalEditar(servico: Servico) {
+    this.modoEdicao = true;
+    this.servicoIdEdicao = servico.id ?? null;
+    this.servicoForm.patchValue(servico);
+    this.exibirModal = true;
   }
 
-  async excluir(id?: string) {
-    if (!id) return;
-    if (confirm('Deseja realmente remover este serviço do catálogo?')) {
-      await this.servicoService.excluir(id);
-      await this.carregar();
+  fecharModal() {
+    this.exibirModal = false;
+  }
+
+  salvar() {
+    if (this.servicoForm.invalid) return;
+
+    const dados = this.servicoForm.value;
+    if (this.modoEdicao && this.servicoIdEdicao) {
+      this.servicosService.atualizarServico({ ...dados, id: this.servicoIdEdicao });
+    } else {
+      this.servicosService.adicionarServico(dados);
+    }
+
+    this.servicos.set(this.servicosService.obterServicos());
+    this.fecharModal();
+  }
+
+  excluir(id?: number) {
+    if (id && confirm('Deseja excluir este serviço?')) {
+      this.servicosService.excluirServico(id);
+      this.servicos.set(this.servicosService.obterServicos());
     }
   }
 }

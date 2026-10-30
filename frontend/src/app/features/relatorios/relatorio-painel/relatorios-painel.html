@@ -1,0 +1,50 @@
+<div class="container-relatorios">
+  <h2>Relatório de Atendimentos da Oficina</h2>
+  <p class="subtitulo">Painel de controle com o status atual dos veículos.</p>
+
+  <!-- Cards de Indicadores -->
+  <div class="cards-grid">
+    <div class="card card-aguardando">
+      <h3>Carros Aguardando</h3>
+      <div class="valor">5</div>
+      <span>Veículos na fila ou em diagnóstico</span>
+    </div>
+
+    <div class="card card-consertados">
+      <h3>Carros Consertados</h3>
+      <div class="valor">{{ obterTotalConsertados() }}</div>
+      <span>Prontos para retirada ou entregues</span>
+    </div>
+
+    <div class="card card-total">
+      <h3>Total de Atendimentos</h3>
+      <div class="valor">{{ 5 + obterTotalConsertados() }}</div>
+      <span>Movimentação geral do período</span>
+    </div>
+  </div>
+
+  <!-- Seção do Gráfico com Filtro -->
+  <div class="secao-grafico">
+    <div class="header-grafico">
+      <h3>Veículos Consertados por Período</h3>
+      <div class="botoes-filtro">
+        <button [class.ativo]="filtroAtivo() === 'dia'" (click)="alterarFiltro('dia')">Dia</button>
+        <button [class.ativo]="filtroAtivo() === 'mes'" (click)="alterarFiltro('mes')">Mês</button>
+        <button [class.ativo]="filtroAtivo() === 'ano'" (click)="alterarFiltro('ano')">Ano</button>
+      </div>
+    </div>
+
+    <div class="grafico-barras">
+      @for (item of dadosGrafico[filtroAtivo()]; track item.label) {
+        <div class="coluna-grafico">
+          <div class="barra-container">
+            <div class="barra" [style.height.%]="(item.valor / 20) * 100">
+              <span class="valor-barra">{{ item.valor }}</span>
+            </div>
+          </div>
+          <span class="rotulo">{{ item.label }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</div>
