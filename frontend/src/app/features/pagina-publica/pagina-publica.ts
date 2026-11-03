@@ -23,26 +23,30 @@ export class PaginaPublica {
   erro = '';
 
   pesquisar(): void {
-    this.placaPesquisada = this.placa.trim().toUpperCase();
-    this.pesquisado = true;
-    this.carregando = true;
-    this.veiculo = null;
-    this.erro = '';
+  this.placaPesquisada = this.placa.trim().toUpperCase();
+  this.pesquisado = false;
+  this.carregando = true;
+  this.veiculo = null;
+  this.erro = '';
 
-    this.veiculosService.listar().subscribe({
-      next: (veiculos) => {
-        const placaNormalizada = this.placaPesquisada.replace(/-/g, '');
+  const placaNormalizada = this.placaPesquisada.replace(/-/g, '');
 
-        this.veiculo = veiculos.find(
-          v => v.placa.replace(/-/g, '').toUpperCase() === placaNormalizada
-        ) ?? null;
+  this.veiculosService.listar().subscribe({
+    next: (veiculos) => {
+      this.veiculo = veiculos.find(
+        v =>
+          v.placa.replace(/-/g, '').toUpperCase() === placaNormalizada
+          && v.ativo === true
+      ) ?? null;
 
-        this.carregando = false;
-      },
-      error: () => {
-        this.erro = 'Não foi possível consultar o veículo. Tente novamente.';
-        this.carregando = false;
-      }
-    });
-  }
+      this.pesquisado = true;
+      this.carregando = false;
+    },
+    error: () => {
+      this.erro = 'Não foi possível consultar o veículo. Tente novamente.';
+      this.pesquisado = true;
+      this.carregando = false;
+    }
+  });
+}
 }

@@ -8,12 +8,12 @@ import { ServicosService } from '../servicos.service';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './servicos-form.html',
-  styles: [''] // Substituído styleUrls por styles vazios para evitar erro de ficheiro CSS ausente
+  styleUrl: './servicos-form.css'
 })
 export class ServicoForm {
   private service = inject(ServicosService);
   private fb = inject(FormBuilder);
-
+  
   // Alterado de 'servicoForm' para 'form' para corresponder ao HTML
   form: FormGroup = this.fb.group({
     nome: ['', Validators.required],

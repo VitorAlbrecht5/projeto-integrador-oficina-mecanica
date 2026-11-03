@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from '../app.module'; // Corrigido com '../'
+import { AppModule } from '../app.module';
 import { getModelToken } from '@nestjs/mongoose';
-import { Servico } from '../servicos/servico.schema'; // Corrigido com '../'
+import { Servico } from '../servicos/servico.schema';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);

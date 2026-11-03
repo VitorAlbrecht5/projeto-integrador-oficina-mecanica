@@ -3,6 +3,7 @@
 :root {
   /* Cores principais */
   --cor-primaria: #46101b;
+  --cor-primaria-hover: #701121;
   --cor-destaque:   #ff914d ;
   --cor-primaria-escura: #46101b ;
 

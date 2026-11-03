@@ -3,13 +3,13 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { RespostaInterceptor } from './common/interceptors/resposta.interceptor';
-
+import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Todas as rotas começam com /api/v1 (versionamento desde o início — PDF 04, cap. 11)
   app.setGlobalPrefix('api/v1');
-
+app.useGlobalPipes(new ValidationPipe());
   // Permite que o front-end Angular (porta 4200) chame a API
   app.enableCors({ origin: 'http://localhost:4200' });
 
