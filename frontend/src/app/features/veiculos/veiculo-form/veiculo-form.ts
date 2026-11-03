@@ -145,7 +145,7 @@ export class VeiculoFormComponent implements OnInit {
       cor: dados.cor,
       ano: Number(dados.ano),
       defeitoRelatado: dados.defeitoRelatado,
-      status: 'Na Fila',
+      status: 'Veículo recebido - Aguardando Avaliação',
         }).subscribe({
       next: () => {
         this.salvando = false;

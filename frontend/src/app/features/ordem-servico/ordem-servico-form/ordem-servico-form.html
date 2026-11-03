@@ -1,0 +1,61 @@
+<main class="formulario-pagina">
+  <header class="formulario-header">
+      <h2>Editar ordem de serviço</h2>
+  </header>
+
+  @if (carregando) { <div class="estado">Carregando dados da ordem...</div> }
+  @if (erro) { <div class="mensagem-erro" role="alert">{{ erro }}</div> }
+
+  @if (!carregando && !erro) {
+    <form [formGroup]="form" (ngSubmit)="salvar()" class="formulario-card">
+      <section class="secao-formulario">
+        <h3>Informações do atendimento</h3>
+        <div class="campo">
+          <label for="descricaoProblema">Observação *</label>
+          <textarea id="descricaoProblema" rows="4" formControlName="descricaoProblema"
+            placeholder="Descreva o que foi observado ou realizado no veículo..."></textarea>
+          @if (form.controls.descricaoProblema.invalid && form.controls.descricaoProblema.touched) {
+            <small class="erro-campo">Informe uma observação (máximo de 500 caracteres).</small>
+          }
+        </div>
+        <div class="campo">
+          <label for="status">Status do veículo *</label>
+          <select id="status" formControlName="status">
+            @for (status of statusDisponiveis; track status) {
+              <option [value]="status">{{ status }}</option>
+            }
+          </select>
+        </div>
+      </section>
+
+      <section class="secao-formulario">
+        <div class="secao-titulo">
+          <div><h3>Serviços prestados</h3>
+            <p>Selecione os serviços realizados neste atendimento.</p></div>
+        </div>
+        @if (servicos.length === 0) {
+          <p class="estado">Nenhum serviço cadastrado no momento.</p>
+        } @else {
+          <div class="servicos-lista">
+            @for (servico of servicos; track servico.id) {
+              <label class="servico-item">
+                <input type="checkbox" [checked]="servico.id !== undefined && servicoSelecionado(servico.id)"
+                  (change)="servico.id !== undefined && alternarServico(servico.id, $any($event.target).checked)" />
+                <span class="servico-info"><strong>{{ servico.nome }}</strong><small>{{ servico.descricao }} · {{ servico.tempoEstimado }}</small></span>
+                <strong class="preco">{{ servico.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+              </label>
+            }
+          </div>
+          <div class="total-servicos"><span>Total dos serviços selecionados</span><strong>{{ valorTotal | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong></div>
+        }
+      </section>
+
+      <footer class="acoes-formulario">
+        <a routerLink="/painel/ordem-servico" class="btn-cancelar">Cancelar</a>
+        <button type="submit" class="btn-salvar" [disabled]="salvando">
+          {{ salvando ? 'Salvando...' : 'Salvar alterações' }}
+        </button>
+      </footer>
+    </form>
+  }
+</main>

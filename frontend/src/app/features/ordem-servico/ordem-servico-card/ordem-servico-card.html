@@ -1,71 +1,59 @@
-
-<article class="os-card">
-  <header class="os-card-header">
-    <div class="os-identificacao">
-      <span
-        class="status-chip"
-        [class.status-fila]="os().status === 'Na Fila'"
-        [class.status-conserto]="os().status === 'Em Conserto'"
-        [class.status-pronto]="os().status === 'Pronto'"
-      >
+<article class="veiculo-card">
+  <header class="veiculo-card-header">
+    <div class="veiculo-identificacao">
+      <span class="status-chip"
+        [class.status-fila]="os().status === 'Veículo recebido - Aguardando Avaliação'"
+        [class.status-conserto]="os().status === 'Em manutenção' || os().status === 'Aguardando Peças'"
+        [class.status-pronto]="os().status === 'Pronto para retirada'">
         {{ os().status }}
       </span>
-
       <h3>{{ os().veiculo }}</h3>
       <p class="placa">{{ os().placa }}</p>
     </div>
   </header>
 
-  <div class="os-card-dados">
+  <div class="veiculo-card-dados">
+    <div class="imagem-veiculo">
+      @if (os().imagemUrl && !imagemComErro) {
+        <img [src]="os().imagemUrl" [alt]="'Imagem do veículo ' + os().veiculo" (error)="imagemComErro = true" />
+      } @else {
+        <img src="/assets/img/veiculo-placeholder.webp" alt="Imagem não disponível para este veículo" />
+      }
+    </div>
+
     <div class="dado">
       <span class="dado-label">Cliente</span>
       <strong>{{ os().cliente }}</strong>
     </div>
 
-    <div class="dado">
-      <span class="dado-label">Data de entrada</span>
-      <strong>{{ os().dataEntrada | date: 'dd/MM/yyyy' }}</strong>
+    <div class="dados-veiculo">
+      <div class="dado">
+        <span class="dado-label">Data de entrada</span>
+        <strong>{{ os().dataEntrada | date: 'dd/MM/yyyy' }}</strong>
+      </div>
+      <div class="dado">
+        <span class="dado-label">Ano</span>
+        <strong>{{ os().ano || 'Não informado' }}</strong>
+      </div>
+      <div class="dado">
+        <span class="dado-label">Cor</span>
+        <strong>{{ os().cor || 'Não informada' }}</strong>
+      </div>
     </div>
 
     <div class="dado problema">
-      <span class="dado-label">Problema relatado</span>
-      <p>{{ os().descricaoProblema }}</p>
+      <span class="dado-label">Observação</span>
+      <p>{{ os().descricaoProblema || 'Nenhuma observação informada.' }}</p>
     </div>
   </div>
 
-  <footer class="os-card-acoes">
-    <span class="acao-titulo">Status da ordem</span>
-
-    <div class="botoes-status">
-      <button
-        type="button"
-        class="btn-status"
-        [class.selecionado]="os().status === 'Na Fila'"
-        [disabled]="os().status === 'Na Fila'"
-        (click)="alterar('Na Fila')"
-      >
-        Na fila
-      </button>
-
-      <button
-        type="button"
-        class="btn-status"
-        [class.selecionado]="os().status === 'Em Conserto'"
-        [disabled]="os().status === 'Em Conserto'"
-        (click)="alterar('Em Conserto')"
-      >
-        Em conserto
-      </button>
-
-      <button
-        type="button"
-        class="btn-status"
-        [class.selecionado]="os().status === 'Pronto'"
-        [disabled]="os().status === 'Pronto'"
-        (click)="alterar('Pronto')"
-      >
-        Pronto
-      </button>
-    </div>
+  <footer class="veiculo-card-acoes">
+    <button type="button" class="btn-editar" (click)="editar()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 20h9" />
+        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
+      </svg>
+      Editar ordem de serviço
+    </button>
   </footer>
 </article>

@@ -16,7 +16,7 @@ export class VeiculosMockService implements VeiculosService {
     cor: 'Branco',
     ano: 2015,
     defeitoRelatado: 'Motor falhando',
-    status: 'Na Fila',
+    status: 'Veículo recebido - Aguardando Avaliação',
     clienteId: 1,
     ativo: true,
   },
@@ -27,7 +27,7 @@ export class VeiculosMockService implements VeiculosService {
     cor: 'Preto',
     ano: 2020,
     defeitoRelatado: 'Troca de óleo',
-    status: 'Em Conserto',
+    status: 'Em manutenção',
     clienteId: 2,
     imagemUrl: 'https://i.imgur.com/n9PA1de.jpeg',
     ativo: true
@@ -39,7 +39,7 @@ export class VeiculosMockService implements VeiculosService {
     cor: 'Prata',
     ano: 2022,
     defeitoRelatado: 'Bateria descarregada',
-    status: 'Pronto',
+    status: 'Pronto para retirada',
     clienteId: 1,
     ativo: true
   },
@@ -50,7 +50,7 @@ export class VeiculosMockService implements VeiculosService {
     cor: 'Vermelho',
     ano: 1995,
     defeitoRelatado: 'Revisão do sistema de freios',
-    status: 'Na Fila',
+    status: 'Veículo recebido - Aguardando Avaliação',
     clienteId: 3,
     imagemUrl: 'https://i.imgur.com/NXcqoGC.jpeg',
     ativo: true
@@ -62,7 +62,7 @@ export class VeiculosMockService implements VeiculosService {
     cor: 'Cinza',
     ano: 2023,
     defeitoRelatado: 'Manutenção preventiva',
-    status: 'Em Conserto',
+    status: 'Em manutenção',
     clienteId: 4,
     imagemUrl: 'https://i.imgur.com/SBDVqJz.jpeg',
     ativo: true
@@ -87,7 +87,7 @@ export class VeiculosMockService implements VeiculosService {
   const novo: Veiculo = {
     ...dto,
     _id: Date.now().toString(),
-    status: 'Na Fila',
+    status: 'Veículo recebido - Aguardando Avaliação',
     ativo: true,
   };
 
