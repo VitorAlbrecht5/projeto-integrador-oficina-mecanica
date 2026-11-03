@@ -3,6 +3,7 @@ import { Layout } from './layout/layout';
 import { PaginaPublica } from './features/pagina-publica/pagina-publica';
 import { NaoEncontrado } from './pages/nao-encontrado/nao-encontrado';
 import { OrdemServicoLista } from './features/ordem-servico/ordem-servico-lista/ordem-servico-lista';
+import { OrdemServicoForm } from './features/ordem-servico/ordem-servico-form/ordem-servico-form';
 import { LoginComponent } from './features/login/login.component';
 export const routes: Routes = [
   {
@@ -35,8 +36,10 @@ export const routes: Routes = [
       },
       {
         path: 'ordem-servico',
-        component: OrdemServicoLista,
-        title: 'Ordens de Serviço',
+        children: [
+          { path: '', component: OrdemServicoLista, title: 'Ordens de Serviço' },
+          { path: 'editar/:id', component: OrdemServicoForm, title: 'Editar Ordem de Serviço' },
+        ],
       },
       {
         path: 'veiculos',

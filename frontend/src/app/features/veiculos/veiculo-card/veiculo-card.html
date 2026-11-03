@@ -1,13 +1,11 @@
 <article class="veiculo-card">
     <header class="veiculo-card-header">
         <div class="veiculo-identificacao">
-            <span class="status-chip" [class.status-fila]="veiculo().status === 'Na Fila'"
-                [class.status-conserto]="veiculo().status === 'Em Conserto'"
-                [class.status-pronto]="veiculo().status === 'Pronto'" [class.status-outro]="
-          veiculo().status !== 'Na Fila' &&
-          veiculo().status !== 'Em Conserto' &&
-          veiculo().status !== 'Pronto'
-        ">
+            <span class="status-chip"
+                [class.status-fila]="veiculo().status === 'Veículo recebido - Aguardando Avaliação'"
+                [class.status-conserto]="veiculo().status === 'Em manutenção' || veiculo().status === 'Aguardando Peças'"
+                [class.status-pronto]="veiculo().status === 'Pronto para retirada'"
+                [class.status-outro]="!['Veículo recebido - Aguardando Avaliação', 'Em manutenção', 'Aguardando Peças', 'Pronto para retirada'].includes(veiculo().status)">
                 {{ veiculo().status }}
             </span>
 

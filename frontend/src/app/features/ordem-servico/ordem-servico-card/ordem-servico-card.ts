@@ -1,10 +1,7 @@
-import { Component, input, output } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
-import {
-  OrdemServicoExibicao,
-  StatusOrdemServico,
-} from '../ordem-servico.model';
+import { Router } from '@angular/router';
+import { OrdemServicoExibicao } from '../ordem-servico.model';
 
 @Component({
   selector: 'app-ordem-servico-card',
@@ -14,10 +11,11 @@ import {
   styleUrl: './ordem-servico-card.css',
 })
 export class OrdemServicoCard {
+  private readonly router = inject(Router);
   os = input.required<OrdemServicoExibicao>();
-  mudarStatus = output<StatusOrdemServico>();
+  imagemComErro = false;
 
-  alterar(status: StatusOrdemServico): void {
-    this.mudarStatus.emit(status);
+  editar(): void {
+    this.router.navigate(['/painel/ordem-servico/editar', this.os()._id]);
   }
 }

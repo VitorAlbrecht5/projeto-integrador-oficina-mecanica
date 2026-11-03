@@ -1,11 +1,7 @@
 
 <div class="os-painel">
   <header class="painel-header">
-    <div>
-      <!-- <span class="eyebrow">GESTÃO DA OFICINA</span> -->
-      <h1>Ordens de Serviço</h1>
-      <p>Acompanhe os atendimentos e o andamento dos veículos.</p>
-    </div>
+      <h2>Ordens de Serviço</h2>
   </header>
 
   <div class="resumo-grid">
@@ -16,21 +12,27 @@
     </div>
 
     <div class="resumo-card">
-      <span class="resumo-label">Na fila</span>
-      <strong>{{ totalNaFila }}</strong>
-      <span class="resumo-legenda">Aguardando atendimento</span>
+      <span class="resumo-label">Aguardando avaliação</span>
+      <strong>{{ totalAguardandoAvaliacao }}</strong>
+      <span class="resumo-legenda">Veículos recém-recebidos</span>
     </div>
 
     <div class="resumo-card">
-      <span class="resumo-label">Em conserto</span>
-      <strong>{{ totalEmConserto }}</strong>
+      <span class="resumo-label">Em manutenção</span>
+      <strong>{{ totalEmManutencao }}</strong>
       <span class="resumo-legenda">Serviços em execução</span>
     </div>
 
     <div class="resumo-card">
-      <span class="resumo-label">Prontos</span>
+      <span class="resumo-label">Aguardando peças</span>
+      <strong>{{ totalAguardandoPecas }}</strong>
+      <span class="resumo-legenda">Serviço pausado por peças</span>
+    </div>
+
+    <div class="resumo-card">
+      <span class="resumo-label">Prontos para retirada</span>
       <strong>{{ totalProntos }}</strong>
-      <span class="resumo-legenda">Disponíveis para retirada</span>
+      <span class="resumo-legenda">Disponíveis para o cliente</span>
     </div>
   </div>
 
@@ -45,9 +47,9 @@
   @if (!carregando() && !erro() && ordens().length === 0) {
     <div class="estado-vazio">
       <h2>Nenhuma ordem de serviço</h2>
-      <p>Comece criando uma ordem para um veículo cadastrado.</p>
-      <a routerLink="/painel/ordem-servico/nova" class="btn-nova">
-        Nova ordem de serviço
+      <p>Cadastre um veículo para iniciar um atendimento.</p>
+      <a routerLink="/painel/veiculos/novo" class="btn-nova">
+        Cadastrar veículo
       </a>
     </div>
   }
@@ -56,7 +58,6 @@
     <div class="lista-titulo">
       <div>
         <h2>Atendimentos registrados</h2>
-        <p>Consulte as ordens e atualize o andamento dos serviços.</p>
       </div>
 
       <span class="contador">{{ ordens().length }} ordem(ns)</span>
@@ -66,7 +67,6 @@
       @for (os of ordens(); track os._id) {
         <app-ordem-servico-card
           [os]="os"
-          (mudarStatus)="onMudarStatus(os._id, $event)"
         />
       }
     </div>
