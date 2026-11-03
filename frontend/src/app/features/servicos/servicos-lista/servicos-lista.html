@@ -1,7 +1,13 @@
 <div class="container-servicos">
   <div class="header-section">
     <h2>Catálogo de Serviços e Valores</h2>
-    <button class="btn-novo" (click)="abrirModalNovo()">+ Novo Serviço</button>
+    <button class="btn-novo" (click)="abrirModalNovo()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 5v14M5 12h14" />
+      </svg>
+      Novo Serviço
+    </button>
   </div>
 
   <table class="tabela-servicos">
@@ -16,48 +22,63 @@
     </thead>
     <tbody>
       @for (s of servicos(); track s.id) {
-        <tr>
-          <td><strong>{{ s.nome }}</strong></td>
-          <td>{{ s.descricao }}</td>
-          <td>R$ {{ s.preco | number:'1.2-2' }}</td>
-          <td>{{ s.tempoEstimado }}</td>
-          <td class="acoes">
-            <button class="btn-editar" (click)="abrirModalEditar(s)">Editar</button>
-            <button class="btn-excluir" (click)="excluir(s.id)">Excluir</button>
-          </td>
-        </tr>
+      <tr>
+        <td><strong>{{ s.nome }}</strong></td>
+        <td>{{ s.descricao }}</td>
+        <td>R$ {{ s.preco | number:'1.2-2' }}</td>
+        <td>{{ s.tempoEstimado }}</td>
+        <td class="acoes">
+          <button type="button" class="btn-editar" (click)="abrirModalEditar(s)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 20h9" />
+              <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
+            </svg>
+            Editar
+          </button>
+
+          <button type="button" class="botao-excluir" (click)="excluir(s.id)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" aria-hidden="true">
+              <path d="M18 6L17.2 18a2 2 0 0 1-2 2H8.8a2 2 0 0 1-2-2L6 6" />
+              <path d="M4 6h16M10 6V4h4v2" />
+            </svg>
+            Excluir
+          </button>
+        </td>
+      </tr>
       }
     </tbody>
   </table>
 
   <!-- Modal de Formulário -->
   @if (exibirModal) {
-    <div class="modal-overlay">
-      <div class="modal-content">
-        <h3>{{ modoEdicao ? 'Editar Serviço' : 'Novo Serviço' }}</h3>
-        <form [formGroup]="servicoForm" (ngSubmit)="salvar()">
-          <div class="form-group">
-            <label>Nome do Serviço *</label>
-            <input type="text" formControlName="nome" placeholder="Ex: Troca de Óleo">
-          </div>
-          <div class="form-group">
-            <label>Descrição *</label>
-            <textarea formControlName="descricao" rows="2"></textarea>
-          </div>
-          <div class="form-group">
-            <label>Preço (R$) *</label>
-            <input type="number" formControlName="preco" step="0.01">
-          </div>
-          <div class="form-group">
-            <label>Tempo Estimado *</label>
-            <input type="text" formControlName="tempoEstimado" placeholder="Ex: 45 min">
-          </div>
-          <div class="modal-actions">
-            <button type="button" class="btn-cancelar" (click)="fecharModal()">Cancelar</button>
-            <button type="submit" class="btn-salvar">Salvar</button>
-          </div>
-        </form>
-      </div>
+  <div class="modal-overlay">
+    <div class="modal-content">
+      <h3>{{ modoEdicao ? 'Editar Serviço' : 'Novo Serviço' }}</h3>
+      <form [formGroup]="servicoForm" (ngSubmit)="salvar()">
+        <div class="form-group">
+          <label>Nome do Serviço *</label>
+          <input type="text" formControlName="nome" placeholder="Ex: Troca de Óleo">
+        </div>
+        <div class="form-group">
+          <label>Descrição *</label>
+          <textarea formControlName="descricao" rows="2"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Preço (R$) *</label>
+          <input type="number" formControlName="preco" step="0.01">
+        </div>
+        <div class="form-group">
+          <label>Tempo Estimado *</label>
+          <input type="text" formControlName="tempoEstimado" placeholder="Ex: 45 min">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-cancelar" (click)="fecharModal()">Cancelar</button>
+          <button type="submit" class="btn-salvar">Salvar</button>
+        </div>
+      </form>
     </div>
+  </div>
   }
 </div>
