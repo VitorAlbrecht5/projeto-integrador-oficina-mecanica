@@ -1,102 +1,50 @@
-/**
- * Popula o banco com dados de exemplo.
- * Uso: npm run seed
- * Cada aluno acrescenta aqui os dados do seu módulo (aula 08).
- */
-import 'dotenv/config';
-import mongoose from 'mongoose';
-import { ProdutoSchema } from '../produtos/schemas/produto.schema';
-import { VeiculoSchema } from '../veiculos/schemas/veiculo.schema';
-const produtos = [
-  {
-    nome: 'Arroz integral 1 kg',
-    preco: 8.9,
-    estoque: 25,
-    categoria: 'alimento',
-  },
-  { nome: 'Feijão preto 1 kg', preco: 7.5, estoque: 40, categoria: 'alimento' },
-  { nome: 'Sabonete neutro', preco: 2.99, estoque: 60, categoria: 'higiene' },
-  { nome: 'Detergente 500 ml', preco: 3.49, estoque: 0, categoria: 'limpeza' },
-  { nome: 'Pilha AA (par)', preco: 12.0, estoque: 15, categoria: 'outros' },
-];
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from '../app.module';
+import { getModelToken } from '@nestjs/mongoose';
+import { Servico } from '../servicos/servico.schema';
 
-const veiculos = [
-  {
-    placa: 'ABC-1234',
-    modelo: 'Gol',
-    cor: 'Branco',
-    ano: 2015,
-    defeitoRelatado: 'Motor falhando',
-    status: 'Na Fila',
-    clienteId: 1,
-    ativo: true,
-  },
-  {
-    placa: 'XYZ-9876',
-    modelo: 'Civic',
-    cor: 'Preto',
-    ano: 2020,
-    defeitoRelatado: 'Troca de óleo',
-    status: 'Em Conserto',
-    clienteId: 2,
-    imagemUrl: 'https://i.imgur.com/n9PA1de.jpeg',
-    ativo: true,
-  },
-  {
-    placa: 'DEF-5678',
-    modelo: 'Onix',
-    cor: 'Prata',
-    ano: 2022,
-    defeitoRelatado: 'Bateria descarregada',
-    status: 'Pronto',
-    clienteId: 1,
-    ativo: true,
-  },
-  {
-    placa: 'GHI-1234',
-    modelo: 'Ford Escort Hobby',
-    cor: 'Vermelho',
-    ano: 1995,
-    defeitoRelatado: 'Revisão do sistema de freios',
-    status: 'Na Fila',
-    clienteId: 3,
-    imagemUrl: 'https://i.imgur.com/NXcqoGC.jpeg',
-    ativo: true,
-  },
-  {
-    placa: 'JKL-5678',
-    modelo: 'Toyota Corolla',
-    cor: 'Cinza',
-    ano: 2023,
-    defeitoRelatado: 'Manutenção preventiva',
-    status: 'Em Conserto',
-    clienteId: 4,
-    imagemUrl: 'https://i.imgur.com/SBDVqJz.jpeg',
-    ativo: true,
-  },
-];
+async function bootstrap() {
+  const app = await NestFactory.createApplicationContext(AppModule);
+  const servicoModel = app.get(getModelToken(Servico.name));
 
-async function seed() {
-  const uri =
-    process.env.MONGODB_URI ?? 'mongodb://localhost:27017/projeto-integrador';
-  await mongoose.connect(uri);
+  const servicosIniciais = [
+    {
+      nome: 'Troca de Óleo e Filtro',
+      descricao: 'Substituição completa do óleo do motor e troca do elemento filtrante.',
+      preco: 150.00,
+      tempoEstimado: '45 minutos'
+    },
+    {
+      nome: 'Alinhamento e Balanceamento',
+      descricao: 'Ajuste da geometria da suspensão e balanceamento das quatro rodas.',
+      preco: 120.00,
+      tempoEstimado: '1 hora'
+    },
+    {
+      nome: 'Revisão do Sistema de Freios',
+      descricao: 'Inspeção, limpeza e troca de pastilhas de freio dianteiras.',
+      preco: 280.00,
+      tempoEstimado: '2 horas'
+    },
+    {
+      nome: 'Substituição da Correia Dentada',
+      descricao: 'Troca preventiva da correia dentada e tensor do motor.',
+      preco: 450.00,
+      tempoEstimado: '3 horas'
+    },
+    {
+      nome: 'Higienização do Ar-Condicionado',
+      descricao: 'Limpeza de dutos com bactericida e troca do filtro de cabine.',
+      preco: 110.00,
+      tempoEstimado: '40 minutos'
+    }
+  ];
 
-  const Produto = mongoose.model('Produto', ProdutoSchema, 'produtos');
-  await Produto.deleteMany({});
-  await Produto.insertMany(produtos);
-  console.log(`✔ ${produtos.length} produtos inseridos`);
+  await servicoModel.deleteMany({});
+  await servicoModel.insertMany(servicosIniciais);
 
-  // VEICULOS
-  const Veiculo = mongoose.model('Veiculo', VeiculoSchema, 'veiculos');
-  await Veiculo.deleteMany({});
-  await Veiculo.insertMany(veiculos);
-  console.log(`✔ ${veiculos.length} veículos inseridos`);
-  // TODO (aula 08): insira aqui os dados de exemplo do seu módulo
-
-  await mongoose.disconnect();
+  console.log('✅ Seed de 5 serviços executado com sucesso!');
+  await app.close();
 }
 
-seed().catch((erro) => {
-  console.error('Erro no seed:', erro);
-  process.exit(1);
-});
+bootstrap();
