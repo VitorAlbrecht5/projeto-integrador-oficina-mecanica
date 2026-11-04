@@ -4,7 +4,7 @@ import { ServicosModule } from './servicos/servicos.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost:27017/oficina'), // Ajuste se usar Atlas ou outra URL
+    MongooseModule.forRoot('mongodb+srv://nicolasdshoffmann2105_db_user:nkzs2105@cluster0.h6tljvm.mongodb.net/oficina?retryWrites=true&w=majority'),
     ServicosModule,
   ],
   controllers: [],

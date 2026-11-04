@@ -1,7 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Servico, ServicoDocument } from './servico.schema';
+import { CriarServicoDto } from './dto/criar-servico.dto';
+import { AtualizarServicoDto } from './dto/atualizar-servico.dto';
 
 @Injectable()
 export class ServicosService {
@@ -9,8 +11,13 @@ export class ServicosService {
     @InjectModel(Servico.name) private servicoModel: Model<ServicoDocument>,
   ) {}
 
-  async criar(dados: any): Promise<Servico> {
-    const novoServico = new this.servicoModel(dados);
+  async criar(dto: CriarServicoDto): Promise<Servico> {
+    // Regra: Garantir nome único para o serviço
+    const existe = await this.servicoModel.exists({ nome: dto.nome });
+    if (existe) {
+      throw new ConflictException('Já existe um serviço cadastrado com este nome.');
+    }
+    const novoServico = new this.servicoModel(dto);
     return novoServico.save();
   }
 
@@ -26,9 +33,9 @@ export class ServicosService {
     return servico;
   }
 
-  async atualizar(id: string, dados: any): Promise<Servico> {
+  async atualizar(id: string, dto: AtualizarServicoDto): Promise<Servico> {
     const servicoAtualizado = await this.servicoModel
-      .findByIdAndUpdate(id, dados, { new: true, runValidators: true })
+      .findByIdAndUpdate(id, dto, { new: true, runValidators: true })
       .exec();
     
     if (!servicoAtualizado) {
