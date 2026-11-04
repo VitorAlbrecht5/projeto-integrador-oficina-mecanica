@@ -26,24 +26,68 @@
   <!-- Seção do Gráfico com Filtro -->
   <div class="secao-grafico">
     <div class="header-grafico">
-      <h3>Veículos Consertados por Período</h3>
+      <div>
+        <h3>Veículos Consertados</h3>
+        <p class="descricao-grafico">
+          Acompanhe a quantidade de veículos finalizados.
+        </p>
+      </div>
+
       <div class="botoes-filtro">
-        <button [class.ativo]="filtroAtivo() === 'dia'" (click)="alterarFiltro('dia')">Dia</button>
-        <button [class.ativo]="filtroAtivo() === 'mes'" (click)="alterarFiltro('mes')">Mês</button>
-        <button [class.ativo]="filtroAtivo() === 'ano'" (click)="alterarFiltro('ano')">Ano</button>
+        <button [class.ativo]="filtroAtivo() === 'dia'" (click)="alterarFiltro('dia')">
+          Dia
+        </button>
+
+        <button [class.ativo]="filtroAtivo() === 'mes'" (click)="alterarFiltro('mes')">
+          Mês
+        </button>
+
+        <button [class.ativo]="filtroAtivo() === 'ano'" (click)="alterarFiltro('ano')">
+          Ano
+        </button>
+      </div>
+    </div>
+
+    <div class="resumo-grafico">
+      <div>
+        <span class="resumo-label">Total no período</span>
+        <strong>
+          {{ somarDadosGrafico() }}
+          <small>veículos</small>
+        </strong>
+      </div>
+
+      <div class="legenda-grafico">
+        <span class="legenda-cor"></span>
+        Veículos consertados
       </div>
     </div>
 
     <div class="grafico-barras">
+      <div class="linhas-fundo">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
       @for (item of dadosGrafico[filtroAtivo()]; track item.label) {
-        <div class="coluna-grafico">
-          <div class="barra-container">
-            <div class="barra" [style.height.%]="(item.valor / 20) * 100">
-              <span class="valor-barra">{{ item.valor }}</span>
-            </div>
+      <div class="coluna-grafico">
+        <div class="barra-container">
+
+          <span class="valor-barra">
+            {{ item.valor }}
+          </span>
+
+          <div class="barra" [style.height.%]="(item.valor / 20) * 100">
           </div>
-          <span class="rotulo">{{ item.label }}</span>
+
         </div>
+
+        <span class="rotulo">
+          {{ item.label }}
+        </span>
+      </div>
       }
     </div>
   </div>

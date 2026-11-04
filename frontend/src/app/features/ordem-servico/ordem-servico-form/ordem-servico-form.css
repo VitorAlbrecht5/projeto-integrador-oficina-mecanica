@@ -168,38 +168,6 @@
      border-top: 1px solid var(--cor-borda, #e1e6ed);
  }
 
- .btn-cancelar,
- .btn-salvar {
-     display: inline-flex;
-     align-items: center;
-     justify-content: center;
-     min-height: 42px;
-     padding: 0 18px;
-     border-radius: 7px;
-     font: inherit;
-     font-size: 13px;
-     font-weight: 600;
-     text-decoration: none;
-     cursor: pointer;
- }
-
- .btn-cancelar {
-     color: var(--cor-texto, #202b3c);
-     background: var(--cor-superficie, #fff);
-     border: 1px solid var(--cor-borda, #d7dee8);
- }
-
- .btn-salvar {
-     color: #fff;
-     background: var(--cor-primaria, #1769aa);
-     border: 1px solid var(--cor-primaria, #1769aa);
- }
-
- .btn-salvar:disabled {
-     opacity: .65;
-     cursor: not-allowed;
- }
-
  .estado {
      padding: 20px;
      color: var(--cor-texto-secundario, #69758a);
@@ -236,9 +204,5 @@
          flex-direction: column-reverse;
      }
 
-     .btn-cancelar,
-     .btn-salvar {
-         width: 100%;
-         box-sizing: border-box;
-     }
+     
  }

@@ -97,12 +97,12 @@
 
     <div class="acoes" style="display: flex; gap: 10px; justify-content: flex-end;">
       <button type="button" routerLink="/painel/veiculos" [disabled]="salvando"
-        style="padding: 10px 20px; cursor: pointer;">
+        class="btn-cancelar">
         Cancelar
       </button>
 
       <button type="submit" [disabled]="salvando || carregando || clientes.length === 0"
-        style="padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer;">
+        class="btn-salvar">
         @if (salvando) {
         Salvando...
         } @else {

@@ -33,13 +33,3 @@
     gap: 10px;
     margin-top: 20px;
 }
-
-.btn-secondary {
-    background-color: #6c757d;
-    color: white;
-    padding: 8px 16px;
-    border-radius: 4px;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-}
