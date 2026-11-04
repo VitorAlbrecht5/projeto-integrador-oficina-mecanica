@@ -11,18 +11,6 @@
     align-items: center;
 }
 
-.btn-novo {
-    background: #0d6efd;
-    color: white;
-    padding: 10px 16px;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.btn-novo:hover {
-    background: #0b5ed7;
-}
 
 .table-responsive {
     overflow-x: auto;
@@ -49,24 +37,17 @@
     font-weight: 600;
 }
 
-.btn-editar {
-    background: #ffc107;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin-right: 6px;
-    font-weight: 500;
+
+.acoes {
+    display: flex;
+    gap: 8px;
 }
 
-.btn-excluir {
-    background: #dc3545;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
+.acoes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 140px;
 }
 
 .empty-msg {
