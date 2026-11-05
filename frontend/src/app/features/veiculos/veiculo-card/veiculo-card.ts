@@ -17,12 +17,15 @@ export class VeiculoCardComponent {
   veiculo = input.required<Veiculo>();
   clienteNome = input('Cliente não encontrado');
   imagemComErro = signal(false);
-  excluir = output<Veiculo>();
-  
+  alterarSituacao = output<Veiculo>();
+
+
   editar(): void {
-    this.router.navigate([
-      '/painel/veiculos/editar',
-      this.veiculo()._id,
-    ]);
+    if (!this.veiculo().ativo) return;
+
+    this.router.navigate(
+      ['/painel/veiculos/editar', this.veiculo()._id],
+  );
   }
+
 }

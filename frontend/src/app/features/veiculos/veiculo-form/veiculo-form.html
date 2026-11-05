@@ -5,23 +5,30 @@
   <p>Carregando dados do veículo...</p>
   }
 
-  @if (erro) {
-  <p role="alert" style="color: red;">{{ erro }}</p>
-  }
+
 
   <form [formGroup]="form" (ngSubmit)="salvar()">
 
-    <div class="campo" style="margin-bottom: 15px;">
+    <div class="campo">
       <label for="placa">Placa *</label>
-      <input id="placa" type="text" formControlName="placa" style="width: 100%; padding: 8px;" />
+
+      <input id="placa" type="text" formControlName="placa" (blur)="normalizarPlaca()" />
 
       @if (modoEdicao) {
       <small>A placa não pode ser alterada.</small>
       }
+
       @if (form.get('placa')?.invalid && form.get('placa')?.touched) {
-      <small style="color: red; display: block; margin-top: 5px;">A placa é obrigatória.</small>
+      <small class="erro-placa">
+        @if (form.get('placa')?.hasError('required')) {
+        A placa é obrigatória.
+        } @else if (form.get('placa')?.hasError('pattern')) {
+        Informe uma placa válida: ABC7532, ABC1234 ou ABC1D23.
+        }
+      </small>
       }
     </div>
+
 
     <div class="campo" style="margin-bottom: 15px;">
       <label for="clienteId">Proprietário *</label>
@@ -52,16 +59,28 @@
       }
     </div>
 
-    <div class="campo" style="margin-bottom: 15px;">
+    <div class="campo">
       <label for="imagemUrl">URL da imagem (opcional)</label>
 
       <input id="imagemUrl" type="url" formControlName="imagemUrl" placeholder="https://exemplo.com/imagem-do-carro.jpg"
-        style="width: 100%; padding: 8px;" />
+        (input)="erroImagem = false" />
 
-      <small>
-        Cole o link de uma imagem do veículo.
-      </small>
+      <small>Cole o link direto de uma imagem do veículo.</small>
+
+      @if (form.get('imagemUrl')?.value?.trim(); as urlImagem) {
+      <div class="imagem-preview">
+        @if (!erroImagem) {
+        <img [src]="urlImagem" alt="Prévia da imagem do veículo" (error)="erroImagem = true" />
+        } @else {
+        <p class="imagem-preview-erro" role="status">
+          Não foi possível carregar a imagem. Confira o link informado.
+        </p>
+        }
+      </div>
+      }
     </div>
+
+
 
     <div class="campo" style="margin-bottom: 15px;">
       <label for="cor">Cor *</label>
@@ -72,18 +91,26 @@
       }
     </div>
 
-    <div class="campo" style="margin-bottom: 15px;">
+    <div class="campo">
       <label for="ano">Ano *</label>
-      <input id="ano" type="number" formControlName="ano" style="width: 100%; padding: 8px;">
+
+      <input id="ano" type="number" formControlName="ano" [min]="anoMinimo" [max]="anoMaximo" step="1" />
 
       @if (form.get('ano')?.invalid && form.get('ano')?.touched) {
-      <small style="color: red; display: block; margin-top: 5px;">
-        @if (form.get('ano')?.hasError('required')) { O ano é obrigatório. }
-        @if (form.get('ano')?.hasError('min')) { O ano deve ser maior que 1950. }
-        @if (form.get('ano')?.hasError('max')) { O ano não pode ser no futuro. }
+      <small class="erro-ano">
+        @if (form.get('ano')?.hasError('required')) {
+        O ano é obrigatório.
+        } @else if (form.get('ano')?.hasError('pattern')) {
+        Informe um ano inteiro.
+        } @else if (form.get('ano')?.hasError('min')) {
+        O ano mínimo permitido é {{ anoMinimo }}.
+        } @else if (form.get('ano')?.hasError('max')) {
+        O ano máximo permitido é {{ anoMaximo }}.
+        }
       </small>
       }
     </div>
+
 
     <div class="campo" style="margin-bottom: 20px;">
       <label for="defeitoRelatado">Defeito Relatado *</label>
@@ -94,14 +121,16 @@
       <small style="color: red; display: block; margin-top: 5px;">O defeito relatado é obrigatório.</small>
       }
     </div>
+    @if (erro) {
+    <p role="alert" style="color: red; text-align: center;">{{ erro }}</p>
+    }
 
     <div class="acoes" style="display: flex; gap: 10px; justify-content: flex-end;">
-      <button type="button" routerLink="/painel/veiculos" [disabled]="salvando"
-        class="btn-cancelar">
+      <button type="button" routerLink="/painel/veiculos" [disabled]="salvando" class="btn-cancelar">
         Cancelar
       </button>
 
-      <button type="submit" [disabled]="salvando || carregando || clientes.length === 0"
+      <button type="submit" [disabled]="salvando || carregando || form.disabled || clientes.length === 0"
         class="btn-salvar">
         @if (salvando) {
         Salvando...
