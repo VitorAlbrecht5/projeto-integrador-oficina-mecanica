@@ -35,9 +35,12 @@ export class VeiculoFormComponent implements OnInit {
   salvando = false;
   carregando = false;
   erro: string | null = null;
+  erroImagem: boolean = false;
   clientes: Cliente[] = [];
-
   idVeiculo: string | null = null;
+
+  readonly anoMinimo = 1950;
+  readonly anoMaximo = new Date().getFullYear() + 1;
 
   get modoEdicao(): boolean {
     return this.idVeiculo !== null;
@@ -57,7 +60,14 @@ export class VeiculoFormComponent implements OnInit {
 
   iniciarFormulario() {
     this.form = this.formBuilder.group({
-      placa: ['', Validators.required],
+      placa: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/i),
+        ],
+      ],
+
       clienteId: [null, Validators.required],
       modelo: ['', Validators.required],
       cor: ['', Validators.required],
@@ -65,8 +75,8 @@ export class VeiculoFormComponent implements OnInit {
         '',
         [
           Validators.required,
-          Validators.min(1950),
-          Validators.max(2026),
+          Validators.min(this.anoMinimo),
+          Validators.max(this.anoMaximo),
         ],
       ],
       defeitoRelatado: ['', Validators.required],
@@ -89,10 +99,20 @@ export class VeiculoFormComponent implements OnInit {
           cor: veiculo.cor,
           ano: veiculo.ano,
           defeitoRelatado: veiculo.defeitoRelatado,
+          imagemUrl: veiculo.imagemUrl ?? '',
         });
+
 
         // A placa é a identificação do veículo e não pode ser alterada.
         this.form.get('placa')?.disable();
+
+        if (!veiculo.ativo) {
+          this.form.disable();
+
+          this.erro =
+            'Este veículo está desativado. Ative-o na lista antes de editar.';
+        }
+
 
         this.carregando = false;
       },
@@ -104,7 +124,24 @@ export class VeiculoFormComponent implements OnInit {
     });
   }
 
+  normalizarPlaca(): void {
+    const campo = this.form.get('placa');
+
+    if (!campo || campo.disabled) return;
+
+    const placa = String(campo.value ?? '')
+      .trim()
+      .replace(/-/g, '')
+      .toUpperCase();
+
+    campo.setValue(placa, { emitEvent: false });
+  }
+
+
+
   salvar() {
+    if (this.form.disabled) return;
+    this.normalizarPlaca();
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -123,6 +160,7 @@ export class VeiculoFormComponent implements OnInit {
         cor: dados.cor,
         ano: Number(dados.ano),
         defeitoRelatado: dados.defeitoRelatado,
+        imagemUrl: dados.imagemUrl?.trim() || '',
       }).subscribe({
         next: () => {
           this.salvando = false;
@@ -130,7 +168,10 @@ export class VeiculoFormComponent implements OnInit {
         },
         error: (erro) => {
           console.error('Erro ao atualizar veículo:', erro);
-          this.erro = 'Não foi possível atualizar o veículo.';
+          this.erro = erro instanceof Error
+            ? erro.message
+            : 'Não foi possível atualizar o veículo.';
+
           this.salvando = false;
         },
       });
@@ -145,15 +186,19 @@ export class VeiculoFormComponent implements OnInit {
       cor: dados.cor,
       ano: Number(dados.ano),
       defeitoRelatado: dados.defeitoRelatado,
+      imagemUrl: dados.imagemUrl?.trim() || '',
       status: 'Veículo recebido - Aguardando Avaliação',
-        }).subscribe({
+    }).subscribe({
       next: () => {
         this.salvando = false;
         this.router.navigate(['/painel/veiculos']);
       },
       error: (erro) => {
         console.error('Erro ao cadastrar veículo:', erro);
-        this.erro = 'Não foi possível cadastrar o veículo.';
+        this.erro = erro instanceof Error
+          ? erro.message
+          : 'Não foi possível cadastrar o veículo.';
+
         this.salvando = false;
       },
     });

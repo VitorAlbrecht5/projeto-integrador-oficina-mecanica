@@ -210,7 +210,7 @@
     width: 16px;
     height: 16px;
     flex-shrink: 0;
-    
+
 }
 
 @media (max-width: 400px) {
@@ -221,4 +221,38 @@
     .veiculo-card-dados {
         gap: 15px;
     }
+}
+
+.status-chip {
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
+
+.btn-editar:disabled,
+.btn-editar:disabled:hover {
+    background: #999999;
+    border-color: var(--cor-texto-secundario, #64748b);
+    cursor: not-allowed;
+    border: none;
+    opacity: 0.5;
+}
+
+.botao-ativar {
+    background: var(--cor-sucesso, #218739);
+    border-color: var(--cor-sucesso, #218739);
+}
+
+.botao-ativar:hover {
+    background: #17652a;
+    border-color: #17652a;
+}
+
+.aviso-desativado {
+    margin: 0 0 10px;
+    color: var(--cor-texto-secundario, #64748b);
+    font-size: 13px;
 }

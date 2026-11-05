@@ -23,15 +23,26 @@ export class VeiculosListaComponent implements OnInit {
   erroAoCarregar = signal<string | null>(null);
 
   termoBusca = signal<string>('');
+  filtroSituacao = signal<'ativos' | 'inativos' | 'todos'>('ativos');
 
   veiculosFiltrados = computed(() => {
-    const lista = this.veiculos();
-    const termo = this.termoBusca().toLowerCase();
-    return lista.filter(v =>
-      v.placa.toLowerCase().includes(termo) ||
-      v.modelo.toLowerCase().includes(termo)
-    );
+    const termo = this.termoBusca().trim().toLowerCase();
+    const filtro = this.filtroSituacao();
+
+    return this.veiculos().filter((veiculo) => {
+      const correspondeSituacao =
+        filtro === 'todos' ||
+        (filtro === 'ativos' && veiculo.ativo) ||
+        (filtro === 'inativos' && !veiculo.ativo);
+
+      const correspondeBusca =
+        veiculo.placa.toLowerCase().includes(termo) ||
+        veiculo.modelo.toLowerCase().includes(termo);
+
+      return correspondeSituacao && correspondeBusca;
+    });
   });
+
 
   ngOnInit() {
     this.carregarVeiculos();
@@ -66,25 +77,39 @@ export class VeiculosListaComponent implements OnInit {
     return cliente?.nomeCompleto ?? 'Cliente não encontrado';
   }
 
-  excluirVeiculo(veiculo: Veiculo) {
-    const confirmar = window.confirm(
-      `Deseja realmente inativar o veículo ${veiculo.modelo}, placa ${veiculo.placa}?`
+  alterarSituacao(veiculo: Veiculo): void {
+    const ativar = !veiculo.ativo;
+    const acao = ativar ? 'ativar' : 'desativar';
+
+    const confirmou = window.confirm(
+      `Deseja ${acao} o veículo ${veiculo.modelo}, placa ${veiculo.placa}?`
     );
 
-    if (!confirmar) {
-      return;
-    }
+    if (!confirmou) return;
 
-    this.veiculosService.excluir(veiculo._id).subscribe({
+    const operacao = ativar
+      ? this.veiculosService.reativar(veiculo._id)
+      : this.veiculosService.excluir(veiculo._id);
+
+    operacao.subscribe({
       next: () => {
-        alert('Veículo inativado com sucesso!');
+        alert(
+          `Veículo ${ativar ? 'ativado' : 'desativado'} com sucesso!`
+        );
+
         this.carregarVeiculos();
       },
       error: (erro) => {
-        console.error('Erro ao inativar veículo:', erro);
-        alert('Não foi possível inativar o veículo.');
+        console.error('Erro ao alterar situação do veículo:', erro);
+
+        alert(
+          erro instanceof Error
+            ? erro.message
+            : 'Não foi possível alterar a situação do veículo.'
+        );
       },
     });
   }
+
 }
 

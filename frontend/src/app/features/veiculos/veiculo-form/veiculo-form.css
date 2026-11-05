@@ -1,0 +1,26 @@
+.imagem-preview {
+    margin-top: 12px;
+}
+
+.imagem-preview img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    background: var(--cor-fundo);
+    border: 1px solid var(--cor-borda);
+    border-radius: 8px;
+}
+
+.imagem-preview-erro {
+    margin: 0;
+    color: var(--cor-erro);
+    font-size: 14px;
+}
+
+.erro-ano, .erro-placa {
+    display: block;
+    margin-top: 5px;
+    color: var(--cor-erro);
+}
+

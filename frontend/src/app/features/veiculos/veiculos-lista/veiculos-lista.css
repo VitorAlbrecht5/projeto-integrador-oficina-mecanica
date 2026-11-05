@@ -119,3 +119,50 @@
     gap: 16px;
   }
 }
+
+
+.barra-acoes {
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.filtro-busca,
+.filtro-situacao {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filtro-busca {
+  flex: 1;
+  min-width: 220px;
+}
+
+.filtro-busca .campo-busca {
+  width: 100%;
+}
+
+.filtro-situacao {
+  min-width: 160px;
+}
+
+.filtro-situacao select {
+  min-height: 40px;
+}
+
+@media (max-width: 600px) {
+  .barra-acoes {
+    align-items: stretch;
+  }
+
+  .filtro-busca,
+  .filtro-situacao {
+    flex: none;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .barra-acoes .btn-novo {
+    width: 100%;
+  }
+}

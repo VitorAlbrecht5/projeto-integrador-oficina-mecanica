@@ -9,4 +9,5 @@ export abstract class VeiculosService {
   abstract criar(veiculo: CriarVeiculoDTO): Observable<Veiculo>;
   abstract atualizar(id: string, veiculo: Partial<Veiculo>): Observable<Veiculo>;
   abstract excluir(id: string): Observable<void>;
+  abstract reativar(id: string): Observable<void>;
 }
