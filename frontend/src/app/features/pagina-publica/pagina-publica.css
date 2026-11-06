@@ -588,7 +588,7 @@
     /* Organiza as etapas em uma linha horizontal */
     .linha-tempo {
         display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+      grid-template-columns: repeat(4, minmax(0, 1fr));
         column-gap: 12px;
     }
 
@@ -621,4 +621,14 @@
     .linha-tempo .etapa-conteudo p {
         font-size: 12px;
     }
+}
+
+.campo-pesquisa button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+#ajuda-placa {
+  font-size: 14px;
+  color: var(--cor-texto-secundario);
 }

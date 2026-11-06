@@ -41,121 +41,108 @@
         <p>
             Consulte o andamento do serviço do seu veículo de forma rápida e simples.
         </p>
+<div class="consulta" id="consulta">
+  <label for="placa">Digite a placa do veículo</label>
+  <form class="campo-pesquisa" (ngSubmit)="pesquisar()">
+    <input
+      id="placa"
+      name="placa"
+      type="text"
+      placeholder="Ex.: ABC1234 ou ABC1D23"
+      [(ngModel)]="placa"
+      [disabled]="carregando"
+      aria-describedby="ajuda-placa"
+      autocapitalize="characters"
+      spellcheck="false"
+    />
+    <button type="submit" [disabled]="carregando">
+      {{ carregando ? 'Consultando...' : 'Pesquisar' }}
+    </button>
+  </form>
+  <p id="ajuda-placa">
+    Consulte sem login. Também aceitamos a placa com hífen.
+  </p>
 
-        <div class="consulta" id="consulta">
-            <label for="placa">Digite a placa do veículo</label>
-
-            <div class="campo-pesquisa">
-                <input id="placa" type="text" placeholder="Ex.: ABC-1234" maxlength="8" [(ngModel)]="placa" />
-
-                <button type="button" (click)="pesquisar()">Pesquisar</button>
-            </div>
-
-            @if (carregando) {
-            <div class="resultado">
-                <div class="resultado-erro resultado-carregando">
-                    <div class="icone-carregando">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="3" opacity="0.2" />
-                            <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" stroke-width="3"
-                                stroke-linecap="round" />
-                        </svg>
-                    </div>
-
-                    <p>Estamos consultando seu veículo...</p>
-                    <p>Aguarde enquanto verificamos as informações.</p>
-                </div>
-            </div>
-            } @else if (pesquisado) {
-            <div class="resultado">
-                @if (veiculo) {
-
-                <div class="placa-mercosul">
-                    <div class="placa-cabecalho">
-                        <span>PLACA:</span>
-                    </div>
-
-                    <div class="placa-numero">{{ veiculo.placa.replace('-', '') }}</div>
-                </div>
-                @if (veiculo.imagemUrl) {
-                <div class="imagem-veiculo">
-                    <img [src]="veiculo.imagemUrl" [alt]="'Imagem do veículo ' + veiculo.modelo" />
-                </div>
-                }
-
-                <div class="dados-veiculo">
-                    <p><strong>Veículo:</strong> {{ veiculo.modelo }}</p>
-                    <!-- <p>
-            <strong>Situação atual:</strong>
-            <span class="situacao">{{ veiculo.status }}</span>
-        </p> -->
-                </div>
-
-                <div class="linha-tempo">
-                    <h3>Andamento do serviço</h3>
-
-                    <div class="etapa concluida">
-                        <div class="etapa-ponto">✓</div>
-                        <div class="etapa-conteudo">
-                            <h4>Veículo recebido</h4>
-                            <p>Veículo foi recebido.</p>
-                        </div>
-                    </div>
-
-                    <div class="etapa concluida">
-                        <div class="etapa-ponto">✓</div>
-                        <div class="etapa-conteudo">
-                            <h4>Aguardando avaliação</h4>
-                            <p>Cadastro e avaliação inicial.</p>
-                        </div>
-                    </div>
-
-                    <div class="etapa ativa">
-                        <div class="etapa-ponto">3</div>
-                        <div class="etapa-conteudo">
-                            <h4>Em manutenção</h4>
-                            <p>O veículo está em manutenção.</p>
-                        </div>
-                    </div>
-
-                    <div class="etapa">
-                        <div class="etapa-ponto">4</div>
-                        <div class="etapa-conteudo">
-                            <h4>Aguardando Peças</h4>
-                            <p>O serviço está parado até a chegada de peças.</p>
-                        </div>
-                    </div>
-
-                    <div class="etapa">
-                        <div class="etapa-ponto">5</div>
-                        <div class="etapa-conteudo">
-                            <h4>Pronto para retirada</h4>
-                            <p>O veículo está disponível para retirada.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <p><strong>Observação:</strong></p>
-                <p class="observacao">
-                    {{ veiculo.defeitoRelatado }}
-                </p>
-
-                } @else {
-                <div class="resultado-erro">
-                    <div class="icone-erro">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                            aria-hidden="true">
-                            <path
-                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v6h2V7zm0 8h-2v2h2v-2z" />
-                        </svg>
-                    </div>
-                    <p>Não encontramos um veículo com essa placa.</p>
-                    <p>Confira a placa digitada e tente novamente.</p>
-                </div>
-                }
-            </div>
-            }
+  @if (carregando) {
+    <div class="resultado" role="status">
+      <p>Estamos consultando seu veículo...</p>
+    </div>
+  } @else if (erro) {
+    <div class="resultado" role="alert">
+      <p>{{ erro }}</p>
+    </div>
+  } @else if (pesquisado) {
+    <div class="resultado">
+      @if (veiculo; as encontrado) {
+        <div class="placa-mercosul">
+          <div class="placa-cabecalho">PLACA</div>
+          <div class="placa-numero">
+            {{ encontrado.placa.replaceAll('-', '').toUpperCase() }}
+          </div>
         </div>
+
+        <div class="imagem-veiculo">
+          <img
+            [src]="imagemComErro || !encontrado.imagemUrl
+              ? '/assets/img/veiculo-placeholder.webp'
+              : encontrado.imagemUrl"
+            [alt]="'Imagem do veículo ' + encontrado.modelo"
+            (error)="imagemComErro = true"
+          />
+        </div>
+
+        <div class="dados-veiculo">
+          <p><strong>Veículo:</strong> {{ encontrado.modelo }}</p>
+          <p>
+            <strong>Situação atual:</strong>
+            <span class="situacao">{{ encontrado.status }}</span>
+          </p>
+        </div>
+
+        @if (aguardandoPecas) {
+          <p class="observacao" role="status">
+            O atendimento está pausado, aguardando peças.
+          </p>
+        }
+
+        @if (etapaAtual >= 0) {
+          <div class="linha-tempo">
+            <h3>Andamento do serviço</h3>
+            @for (etapa of etapas; track etapa.titulo; let i = $index) {
+              <div
+                class="etapa"
+                [class.concluida]="i < etapaAtual"
+                [class.ativa]="i === etapaAtual"
+                [attr.aria-current]="i === etapaAtual ? 'step' : null"
+              >
+                <div class="etapa-ponto">{{ i + 1 }}</div>
+                <div class="etapa-conteudo">
+                  <h4>{{ etapa.titulo }}</h4>
+                  <p>{{ etapa.descricao }}</p>
+                  @if (i === etapaAtual) {
+                    <span class="etapa-status">Etapa atual</span>
+                  } @else if (i < etapaAtual) {
+                    <span class="etapa-status">Concluída</span>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        } @else {
+          <p>As etapas para este status ainda não estão disponíveis.</p>
+        }
+
+        <p><strong>Observação:</strong></p>
+        <p class="observacao">{{ encontrado.defeitoRelatado }}</p>
+      } @else {
+        <div class="resultado-erro" role="status">
+          <p>Não encontramos um veículo ativo com essa placa.</p>
+          <p>Confira a placa digitada e tente novamente.</p>
+        </div>
+      }
+    </div>
+  }
+</div>
     </section>
 
     <section class="sobre" id="sobre">
