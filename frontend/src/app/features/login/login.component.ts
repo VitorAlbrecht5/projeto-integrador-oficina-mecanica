@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { AuthService } from '../../core/models/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -11,28 +13,37 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 })
 export class LoginComponent {
   loginForm: FormGroup;
-  mensagemPendencia: string = '';
+  errorMessage: string = '';
+  loading: boolean = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       senha: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
-  onSubmit() {
-    if (this.loginForm.invalid) {
-      return;
-    }
+  onSubmit(): void {
+    if (this.loginForm.invalid) return;
 
-    const { email, senha } = this.loginForm.value;
+    this.loading = true;
+    this.errorMessage = '';
 
-    // ATENÇÃO: Validação temporária (mock) de frontend. 
-    // A autenticação real e segura depende da integração futura com o backend.
-    if (email === 'admin@oficina.com' && senha === 'admin123') {
-      alert('Login simulado com sucesso! (Aguardando integração com serviço de autenticação real)');
-    } else {
-      this.mensagemPendencia = 'Credenciais inválidas. Verifique os dados informados.';
-    }
+    this.authService.login(this.loginForm.value).subscribe({
+      next: (response) => {
+        this.authService.saveToken(response.access_token);
+        this.loading = false;
+        // Redireciona para o dashboard ou painel de ordens de serviço
+        this.router.navigate(['/ordem-servico']); 
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMessage = err.error?.message || 'Erro ao efetuar login. Verifica as tuas credenciais.';
+      }
+    });
   }
 }
