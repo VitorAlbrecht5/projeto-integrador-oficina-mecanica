@@ -10,7 +10,9 @@ import { RespostaApi } from './resposta-api';
 export class AuthService {
   private apiUrl = 'http://localhost:3000/api/v1/auth/login';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    localStorage.removeItem('access_token');
+  }
 
   login(credentials: LoginDto): Observable<AuthResponse> {
     return this.http
@@ -20,15 +22,15 @@ export class AuthService {
 
 
   saveToken(token: string): void {
-    localStorage.setItem('access_token', token);
+    sessionStorage.setItem('access_token', token);
   }
 
   getToken(): string | null {
-    return localStorage.getItem('access_token');
+    return sessionStorage.getItem('access_token');
   }
 
   logout(): void {
-    localStorage.removeItem('access_token');
+    sessionStorage.removeItem('access_token');
   }
 
   isAuthenticated(): boolean {
@@ -57,7 +59,7 @@ export class AuthService {
         return true;
       }
     } catch {
-      
+
     }
 
     this.logout();

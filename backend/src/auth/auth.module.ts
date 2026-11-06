@@ -7,9 +7,13 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { Admin, AdminSchema } from './schemas/admin.schema';
+import { UsuariosModule } from '../usuarios/usuarios.module';
+import { APP_GUARD } from '@nestjs/core';
+import { PerfisGuard } from './guards/perfis.guard';
 
 @Module({
   imports: [
+    UsuariosModule,
     MongooseModule.forFeature([{ name: Admin.name, schema: AdminSchema }]),
     JwtModule.registerAsync({
       global: true,
@@ -32,7 +36,19 @@ import { Admin, AdminSchema } from './schemas/admin.schema';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthGuard],
+  providers: [
+    AuthService,
+    AuthGuard,
+    PerfisGuard,
+    {
+      provide: APP_GUARD,
+      useExisting: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useExisting: PerfisGuard,
+    },
+  ],
   exports: [AuthService, AuthGuard],
 })
 export class AuthModule {}

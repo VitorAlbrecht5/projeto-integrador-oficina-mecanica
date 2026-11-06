@@ -1,41 +1,31 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Test } from '@nestjs/testing';
 import { ServicosService } from './servicos.service';
 import { getModelToken } from '@nestjs/mongoose';
 import { Servico } from './servico.schema';
 import { NotFoundException } from '@nestjs/common';
+import { describe, beforeEach, it, expect, jest } from '@jest/globals';
 
-describe('ServicosService', () => {
+void describe('ServicosService', () => {
   let service: ServicosService;
-  let model: any;
 
-  const mockServicoModel = {
-    new: jest.fn().mockImplementation((dto) => ({
-      ...dto,
-      save: jest.fn().mockResolvedValue({ _id: '123', ...dto }),
-    })),
-    constructor: jest.fn().mockImplementation((dto) => ({
-      ...dto,
-      save: jest.fn().mockResolvedValue({ _id: '123', ...dto }),
-    })),
-    find: jest.fn(),
+  const modelMock = {
     findById: jest.fn(),
-    findByIdAndUpdate: jest.fn(),
-    findByIdAndDelete: jest.fn(),
   };
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    jest.clearAllMocks();
+
+    const modulo = await Test.createTestingModule({
       providers: [
         ServicosService,
         {
           provide: getModelToken(Servico.name),
-          useValue: mockServicoModel,
+          useValue: modelMock,
         },
       ],
     }).compile();
 
-    service = module.get<ServicosService>(ServicosService);
-    model = module.get(getModelToken(Servico.name));
+    service = modulo.get(ServicosService);
   });
 
   it('deve estar definido', () => {
@@ -43,8 +33,8 @@ describe('ServicosService', () => {
   });
 
   it('deve lançar NotFoundException ao buscar ID inexistente', async () => {
-    model.findById.mockReturnValue({
-      exec: jest.fn().mockResolvedValue(null),
+    modelMock.findById.mockReturnValue({
+      exec: () => Promise.resolve(null),
     });
 
     await expect(service.buscarPorId('999')).rejects.toThrow(NotFoundException);

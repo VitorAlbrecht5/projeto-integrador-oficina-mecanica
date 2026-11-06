@@ -6,7 +6,7 @@ import { ServicosService } from './servicos.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Servico.name, schema: ServicoSchema }])
+    MongooseModule.forFeature([{ name: Servico.name, schema: ServicoSchema }]),
   ],
   controllers: [ServicosController],
   providers: [ServicosService],

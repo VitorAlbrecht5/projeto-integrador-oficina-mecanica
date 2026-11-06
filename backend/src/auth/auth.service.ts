@@ -1,33 +1,46 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import * as bcrypt from 'bcrypt';
-import { LoginDto } from './dto/login.dto';
-import { Admin, AdminDocument } from './schemas/admin.schema';
+import { compare } from 'bcrypt';
+import { UsuariosService } from '../usuarios/usuarios.service';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel(Admin.name) private adminModel: Model<AdminDocument>,
-    private readonly jwtService: JwtService,
+    private readonly usuarios: UsuariosService,
+    private readonly jwt: JwtService,
   ) {}
 
-  async login(loginDto: LoginDto) {
-    const { email, senha } = loginDto;
+  async login(email: string, senha: string) {
+    const usuario = await this.usuarios.buscarPorEmailComSenha(email);
 
-    // Busca o admin real no banco de dados
-    const admin = await this.adminModel.findOne({ email });
+    let confere = false;
 
-    if (!admin || !(await bcrypt.compare(senha, admin.senha))) {
-      throw new UnauthorizedException('E-mail ou senha inválidos.');
+    if (
+      usuario &&
+      usuario.perfil === 'admin' &&
+      Buffer.byteLength(senha, 'utf8') <= 72
+    ) {
+      confere = await compare(senha, usuario.senhaHash);
     }
 
-    const payload = { sub: admin._id, email: admin.email };
+    if (!usuario || !confere) {
+      throw new UnauthorizedException('Credenciais inválidas');
+    }
+
+    const accessToken = await this.jwt.signAsync({
+      sub: usuario._id,
+      nome: usuario.nome,
+      perfil: usuario.perfil,
+    });
 
     return {
-      mensagem: 'Login realizado com sucesso!',
-      access_token: this.jwtService.sign(payload),
+      accessToken,
+      usuario: {
+        _id: usuario._id,
+        nome: usuario.nome,
+        email: usuario.email,
+        perfil: usuario.perfil,
+      },
     };
   }
 }

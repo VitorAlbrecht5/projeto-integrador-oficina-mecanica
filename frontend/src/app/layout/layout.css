@@ -334,3 +334,58 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+.marca {
+  min-width: 0;
+  flex: 1;
+}
+
+.marca span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sessao-admin {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.identificacao-admin {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.botao-sair {
+  padding: 8px 12px;;
+  border-radius: 6px;
+  border: none;
+  background: red;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: background 0.2s;
+}
+
+.botao-sair:hover {
+  background: rgb(255, 46, 46);
+}
+
+.botao-sair svg {
+  width: 16px;
+  height: 16px;
+}
+
+
+@media (max-width: 700px) {
+  .identificacao-admin {
+    display: none;
+  }
+}
