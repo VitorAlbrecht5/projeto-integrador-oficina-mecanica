@@ -1,13 +1,28 @@
-import { Controller, Get, Post, Body, Param, Put, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { ServicosService } from './servicos.service';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { Perfis } from '../auth/decorators/perfis.decorator';
 
+@ApiBearerAuth()
+@Perfis('admin')
 @Controller('servicos')
 export class ServicosController {
   constructor(private readonly servicosService: ServicosService) {}
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  async criar(@Body() dados: any) {
+  async criar(@Body() dados: Record<string, unknown>) {
     return this.servicosService.criar(dados);
   }
 
@@ -22,7 +37,7 @@ export class ServicosController {
   }
 
   @Put(':id')
-  async atualizar(@Param('id') id: string, @Body() dados: any) {
+  async atualizar(@Param('id') id: string, @Body() dados: Record<string, unknown>) {
     return this.servicosService.atualizar(id, dados);
   }
 

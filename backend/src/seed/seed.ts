@@ -2,42 +2,46 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../app.module';
 import { getModelToken } from '@nestjs/mongoose';
 import { Servico } from '../servicos/servico.schema';
+import type { Model } from 'mongoose';
 
 async function bootstrap() {
   const app = await NestFactory.createApplicationContext(AppModule);
-  const servicoModel = app.get(getModelToken(Servico.name));
+  const servicoModel = app.get<Model<Servico>>(getModelToken(Servico.name));
 
   const servicosIniciais = [
     {
       nome: 'Troca de Óleo e Filtro',
-      descricao: 'Substituição completa do óleo do motor e troca do elemento filtrante.',
-      preco: 150.00,
-      tempoEstimado: '45 minutos'
+      descricao:
+        'Substituição completa do óleo do motor e troca do elemento filtrante.',
+      preco: 150.0,
+      tempoEstimado: '45 minutos',
     },
     {
       nome: 'Alinhamento e Balanceamento',
-      descricao: 'Ajuste da geometria da suspensão e balanceamento das quatro rodas.',
-      preco: 120.00,
-      tempoEstimado: '1 hora'
+      descricao:
+        'Ajuste da geometria da suspensão e balanceamento das quatro rodas.',
+      preco: 120.0,
+      tempoEstimado: '1 hora',
     },
     {
       nome: 'Revisão do Sistema de Freios',
       descricao: 'Inspeção, limpeza e troca de pastilhas de freio dianteiras.',
-      preco: 280.00,
-      tempoEstimado: '2 horas'
+      preco: 280.0,
+      tempoEstimado: '2 horas',
     },
     {
       nome: 'Substituição da Correia Dentada',
       descricao: 'Troca preventiva da correia dentada e tensor do motor.',
-      preco: 450.00,
-      tempoEstimado: '3 horas'
+      preco: 450.0,
+      tempoEstimado: '3 horas',
     },
     {
       nome: 'Higienização do Ar-Condicionado',
-      descricao: 'Limpeza de dutos com bactericida e troca do filtro de cabine.',
-      preco: 110.00,
-      tempoEstimado: '40 minutos'
-    }
+      descricao:
+        'Limpeza de dutos com bactericida e troca do filtro de cabine.',
+      preco: 110.0,
+      tempoEstimado: '40 minutos',
+    },
   ];
 
   await servicoModel.deleteMany({});
@@ -47,4 +51,10 @@ async function bootstrap() {
   await app.close();
 }
 
-bootstrap();
+void bootstrap().catch((erro: unknown) => {
+  console.error(
+    erro instanceof Error ? erro.message : 'Falha ao executar o seed.',
+  );
+
+  process.exitCode = 1;
+});

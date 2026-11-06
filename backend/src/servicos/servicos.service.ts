@@ -9,7 +9,7 @@ export class ServicosService {
     @InjectModel(Servico.name) private servicoModel: Model<ServicoDocument>,
   ) {}
 
-  async criar(dados: any): Promise<Servico> {
+  async criar(dados: Record<string, unknown>): Promise<Servico> {
     const novoServico = new this.servicoModel(dados);
     return novoServico.save();
   }
@@ -26,13 +26,18 @@ export class ServicosService {
     return servico;
   }
 
-  async atualizar(id: string, dados: any): Promise<Servico> {
+  async atualizar(
+    id: string,
+    dados: Record<string, unknown>,
+  ): Promise<Servico> {
     const servicoAtualizado = await this.servicoModel
       .findByIdAndUpdate(id, dados, { new: true, runValidators: true })
       .exec();
-    
+
     if (!servicoAtualizado) {
-      throw new NotFoundException(`Serviço com ID ${id} não foi encontrado para atualizar.`);
+      throw new NotFoundException(
+        `Serviço com ID ${id} não foi encontrado para atualizar.`,
+      );
     }
     return servicoAtualizado;
   }
@@ -40,7 +45,9 @@ export class ServicosService {
   async remover(id: string): Promise<void> {
     const resultado = await this.servicoModel.findByIdAndDelete(id).exec();
     if (!resultado) {
-      throw new NotFoundException(`Serviço com ID ${id} não foi encontrado para exclusão.`);
+      throw new NotFoundException(
+        `Serviço com ID ${id} não foi encontrado para exclusão.`,
+      );
     }
   }
 }

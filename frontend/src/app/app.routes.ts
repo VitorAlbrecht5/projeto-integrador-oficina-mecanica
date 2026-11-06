@@ -5,6 +5,8 @@ import { NaoEncontrado } from './pages/nao-encontrado/nao-encontrado';
 import { OrdemServicoLista } from './features/ordem-servico/ordem-servico-lista/ordem-servico-lista';
 import { OrdemServicoForm } from './features/ordem-servico/ordem-servico-form/ordem-servico-form';
 import { LoginComponent } from './features/login/login.component';
+import { authGuard } from './features/login/auth.guard';
+
 export const routes: Routes = [
   {
     path: 'login',
@@ -18,6 +20,8 @@ export const routes: Routes = [
   {
     path: 'painel',
     component: Layout,
+    canActivate: [authGuard],
+    canActivateChild: [authGuard],
     children: [
       {
         path: '',

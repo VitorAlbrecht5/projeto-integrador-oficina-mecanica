@@ -38,7 +38,7 @@ export class LoginComponent {
         this.authService.saveToken(response.access_token);
         this.loading = false;
         // Redireciona para o dashboard ou painel de ordens de serviço
-        this.router.navigate(['/ordem-servico']); 
+        this.router.navigate(['/painel/ordem-servico']); 
       },
       error: (err) => {
         this.loading = false;

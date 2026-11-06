@@ -11,9 +11,9 @@ export class Servico {
   @Prop({ required: true })
   descricao: string;
 
-  @Prop({ 
-    required: true, 
-    min: [0, 'O preço do serviço não pode ser negativo.'] 
+  @Prop({
+    required: true,
+    min: [0, 'O preço do serviço não pode ser negativo.'],
   })
   preco: number;
 
