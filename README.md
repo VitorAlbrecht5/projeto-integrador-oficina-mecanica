@@ -37,7 +37,7 @@ consultar a situação em tempo real digitando apenas a placa do seu carro.
 - MongoDB Community rodando em `mongodb://localhost:27017` (`mongosh` para testar)
 - Git e VS Code
 
-## Como rodar
+## Como rodar.
 
 ```bash
 # 1) Back-end
