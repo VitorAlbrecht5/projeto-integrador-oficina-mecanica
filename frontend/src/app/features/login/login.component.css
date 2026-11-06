@@ -1,10 +1,26 @@
-.login-container {
+/* .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
   background-color: var(--background-color, #f4f6f8);
   padding: 1rem;
+} */
+/* BACKGROUND COM IMAGEM */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
+    url('https://images.unsplash.com/photo-1792793178803-455e5a544867?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D');
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .login-card {
@@ -73,7 +89,7 @@
 .btn-submit {
   width: 100%;
   padding: 0.75rem;
-  background-color: var(--primary-color, #007bff);
+  background-color: var(--cor-destaque,);
   color: white;
   border: none;
   border-radius: 4px;
@@ -89,7 +105,7 @@
 }
 
 .btn-submit:not(:disabled):hover {
-  background-color: var(--primary-hover-color, #0056b3);
+  background-color: var(--cor-destaque-hover);
 }
 
 .security-notice {
