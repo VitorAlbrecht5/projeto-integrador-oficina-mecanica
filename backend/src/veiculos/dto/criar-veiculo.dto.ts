@@ -1,7 +1,7 @@
 import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
-  IsEnum,
+  IsIn,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -13,18 +13,20 @@ import {
   MinLength,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-
+import { normalizarPlaca } from '../normalizar-placa';
 import { STATUS_VEICULO } from '../schemas/veiculo.schema';
 import type { StatusVeiculo } from '../schemas/veiculo.schema';
+import { normalizarStatusVeiculo } from '../normalizar-status';
 
 export class CriarVeiculoDto {
-  @ApiProperty({ example: 'ABC-1234', description: 'Placa do veículo' })
-  @Transform(({ value }: { value: unknown }) =>
-    typeof value === 'string' ? value.trim().toUpperCase() : value,
-  )
+  @ApiProperty({
+    example: 'ABC1234',
+    description: 'Placa em maiúsculas e sem traço',
+  })
+  @Transform(({ value }: { value: unknown }) => normalizarPlaca(value))
   @IsString()
   @IsNotEmpty()
-  @Matches(/^[A-Z]{3}-[0-9]{4}$|^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/, {
+  @Matches(/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/, {
     message: 'Informe uma placa válida.',
   })
   placa!: string;
@@ -58,7 +60,10 @@ export class CriarVeiculoDto {
     example: 'Na Fila',
   })
   @IsOptional()
-  @IsEnum(STATUS_VEICULO)
+  @Transform(({ value }: { value: unknown }) => normalizarStatusVeiculo(value))
+  @IsIn(STATUS_VEICULO, {
+    message: 'Informe um status válido para o veículo.',
+  })
   status?: StatusVeiculo;
 
   @ApiProperty({ example: 1 })

@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { normalizarPlaca } from '../normalizar-placa';
+import { normalizarStatusVeiculo } from '../normalizar-status';
 
 // Estados permitidos para os veículos
 export const STATUS_VEICULO = [
@@ -20,8 +22,9 @@ export class Veiculo {
     trim: true,
     uppercase: true,
     minlength: 7,
-    maxlength: 8,
-    match: /^[A-Z]{3}-[0-9]{4}$|^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/,
+    maxlength: 7,
+    set: normalizarPlaca,
+    match: /^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/,
   })
   placa!: string;
 
@@ -57,6 +60,7 @@ export class Veiculo {
     type: String,
     enum: STATUS_VEICULO,
     default: 'Na Fila',
+    set: normalizarStatusVeiculo,
   })
   status!: StatusVeiculo;
 
