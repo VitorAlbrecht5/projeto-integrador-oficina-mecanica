@@ -34,8 +34,8 @@
       <label for="clienteId">Proprietário *</label>
       <select id="clienteId" formControlName="clienteId" style="width: 100%; padding: 8px;">
         <option [ngValue]="null">Selecione o proprietário</option>
-        @for (cliente of clientes; track cliente.id) {
-        <option [ngValue]="cliente.id">
+        @for (cliente of clientes; track cliente._id) {
+        <option [value]="cliente._id">
           {{ cliente.nomeCompleto }} — {{ cliente.cpf }}
         </option>
         }
@@ -45,8 +45,8 @@
       <small style="color: red; display: block; margin-top: 5px;">Selecione um proprietário.</small>
       }
 
-      @if (clientes.length === 0) {
-      <small style="color: red; display: block; margin-top: 5px;">Nenhum cliente cadastrado.</small>
+      @if (!carregandoClientes && clientes.length === 0) {
+      <small style="color: red; display: block; margin-top: 5px;">Nenhum cliente ativo cadastrado.</small>
       }
     </div>
 
@@ -130,7 +130,7 @@
         Cancelar
       </button>
 
-      <button type="submit" [disabled]="salvando || carregando || form.disabled || clientes.length === 0"
+      <button type="submit" [disabled]="salvando || carregando || form.disabled || clientes.length === 0 || carregandoClientes"
         class="btn-salvar">
         @if (salvando) {
         Salvando...

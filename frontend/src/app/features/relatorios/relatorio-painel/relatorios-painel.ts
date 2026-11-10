@@ -1,5 +1,7 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { PeriodoRelatorio, RelatorioOficina } from '../relatorios.model';
+import { RelatorioService } from '../relatorios.service';
 
 @Component({
   selector: 'app-relatorio-painel',
@@ -8,39 +10,42 @@ import { CommonModule } from '@angular/common';
   templateUrl: './relatorios-painel.html',
   styleUrls: ['./relatorios-painel.css'],
 })
-export class RelatorioPainel {
-  filtroAtivo = signal<'dia' | 'mes' | 'ano'>('mes');
+export class RelatorioPainel implements OnInit {
+  private readonly relatorios = inject(RelatorioService);
+  filtroAtivo = signal<PeriodoRelatorio>('mes');
+  dados = signal<RelatorioOficina | null>(null);
+  carregando = signal(false);
+  erro = signal('');
 
-  dadosGrafico = {
-    dia: [
-      { label: 'Seg', valor: 2 },
-      { label: 'Ter', valor: 4 },
-      { label: 'Qua', valor: 3 },
-      { label: 'Qui', valor: 5 },
-      { label: 'Sex', valor: 1 },
-    ],
-    mes: [
-      { label: 'Semana 1', valor: 3 },
-      { label: 'Semana 2', valor: 4 },
-      { label: 'Semana 3', valor: 2 },
-      { label: 'Semana 4', valor: 3 },
-    ],
-    ano: [
-      { label: 'Jan', valor: 10 },
-      { label: 'Fev', valor: 12 },
-      { label: 'Mar', valor: 15 },
-      { label: 'Abr', valor: 14 },
-    ],
-  };
+  ngOnInit() { this.carregar('mes'); }
 
-  alterarFiltro(periodo: 'dia' | 'mes' | 'ano') {
+  alterarFiltro(periodo: PeriodoRelatorio) {
+    if (periodo !== this.filtroAtivo()) this.carregar(periodo);
+  }
+
+  carregar(periodo: PeriodoRelatorio) {
     this.filtroAtivo.set(periodo);
+    this.carregando.set(true);
+    this.erro.set('');
+    this.relatorios.obterResumo(periodo).subscribe({
+      next: resposta => {
+        if (this.filtroAtivo() !== periodo) return;
+        this.dados.set(resposta);
+        this.carregando.set(false);
+      },
+      error: () => {
+        if (this.filtroAtivo() !== periodo) return;
+        this.carregando.set(false);
+        this.erro.set('Não foi possível carregar os relatórios. Verifique a conexão com a API.');
+      },
+    });
   }
 
-  obterTotalConsertados(): number {
-    return this.dadosGrafico[this.filtroAtivo()].reduce((acc, item) => acc + item.valor, 0);
+  get alturaMaxima(): number {
+    return Math.max(1, ...((this.dados()?.grafico ?? []).map(item => item.valor)));
   }
-  somarDadosGrafico(): number {
-    return this.dadosGrafico[this.filtroAtivo()].reduce((total, item) => total + item.valor, 0);
+
+  get totalNoPeriodo(): number {
+    return (this.dados()?.grafico ?? []).reduce((total, item) => total + item.valor, 0);
   }
 }

@@ -17,7 +17,7 @@ export class VeiculosMockService implements VeiculosService {
       ano: 2015,
       defeitoRelatado: 'Motor falhando',
       status: 'Veículo recebido - Aguardando Avaliação',
-      clienteId: 1,
+      clienteId: '1',
       imagemUrl: 'https://autoentusiastas.com.br/ae/wp-content/uploads/2020/04/Vectra-25.jpg',
       ativo: true,
     },
@@ -29,7 +29,7 @@ export class VeiculosMockService implements VeiculosService {
       ano: 2020,
       defeitoRelatado: 'Troca de óleo',
       status: 'Em manutenção',
-      clienteId: 2,
+      clienteId: '2',
       imagemUrl: 'https://i.imgur.com/n9PA1de.jpeg',
       ativo: true
     },
@@ -41,7 +41,7 @@ export class VeiculosMockService implements VeiculosService {
       ano: 2022,
       defeitoRelatado: 'Bateria descarregada',
       status: 'Pronto para retirada',
-      clienteId: 1,
+      clienteId: '1',
       imagemUrl: 'https://i.em.com.br/NYlDQXo5HRAjM3DjTpY7wQZBLL8=/790x/smart/imgsapp.em.com.br/app/noticia_127983242361/2021/04/17/1257870/20210416191605965912u.jpg',
       ativo: true
     },
@@ -53,7 +53,7 @@ export class VeiculosMockService implements VeiculosService {
       ano: 1995,
       defeitoRelatado: 'Revisão do sistema de freios',
       status: 'Veículo recebido - Aguardando Avaliação',
-      clienteId: 3,
+      clienteId: '3',
       imagemUrl: 'https://i.imgur.com/NXcqoGC.jpeg',
       ativo: true
     },
@@ -65,7 +65,7 @@ export class VeiculosMockService implements VeiculosService {
       ano: 2023,
       defeitoRelatado: 'Manutenção preventiva',
       status: 'Em manutenção',
-      clienteId: 4,
+      clienteId: '4',
       imagemUrl: 'https://i.imgur.com/SBDVqJz.jpeg',
       ativo: true
     },

@@ -1,94 +1,68 @@
 <div class="container-relatorios">
   <h2>Relatório de Atendimentos da Oficina</h2>
-  <p class="subtitulo">Painel de controle com o status atual dos veículos.</p>
+  <p class="subtitulo">Indicadores reais das ordens de serviço registradas no MongoDB.</p>
 
-  <!-- Cards de Indicadores -->
+  @if (erro()) {
+    <div class="mensagem-erro-relatorio" role="alert">{{ erro() }}
+      <button type="button" (click)="carregar(filtroAtivo())">Tentar novamente</button>
+    </div>
+  }
+  @if (carregando()) { <p role="status">Carregando indicadores...</p> }
+
   <div class="cards-grid">
     <div class="card card-aguardando">
-      <h3>Carros Aguardando</h3>
-      <div class="valor">5</div>
-      <span>Veículos na fila ou em diagnóstico</span>
+      <h3>Ordens em andamento</h3>
+      <div class="valor">{{ dados()?.emAndamento ?? '—' }}</div>
+      <span>Na fila, em conserto ou aguardando peça</span>
     </div>
-
     <div class="card card-consertados">
-      <h3>Carros Consertados</h3>
-      <div class="valor">{{ obterTotalConsertados() }}</div>
-      <span>Prontos para retirada ou entregues</span>
+      <h3>Ordens finalizadas</h3>
+      <div class="valor">{{ dados()?.finalizadas ?? '—' }}</div>
+      <span>Atendimentos com status Pronto</span>
     </div>
-
     <div class="card card-total">
-      <h3>Total de Atendimentos</h3>
-      <div class="valor">{{ 5 + obterTotalConsertados() }}</div>
-      <span>Movimentação geral do período</span>
+      <h3>Total de atendimentos</h3>
+      <div class="valor">{{ dados()?.totalAtendimentos ?? '—' }}</div>
+      <span>Ordens cadastradas no histórico completo</span>
     </div>
   </div>
 
-  <!-- Seção do Gráfico com Filtro -->
   <div class="secao-grafico">
     <div class="header-grafico">
       <div>
-        <h3>Veículos Consertados</h3>
-        <p class="descricao-grafico">
-          Acompanhe a quantidade de veículos finalizados.
-        </p>
+        <h3>Finalizações por período</h3>
+        <p class="descricao-grafico">Contagem de ordens finalizadas, com dados reais da API.</p>
       </div>
-
-      <div class="botoes-filtro">
-        <button [class.ativo]="filtroAtivo() === 'dia'" (click)="alterarFiltro('dia')">
-          Dia
-        </button>
-
-        <button [class.ativo]="filtroAtivo() === 'mes'" (click)="alterarFiltro('mes')">
-          Mês
-        </button>
-
-        <button [class.ativo]="filtroAtivo() === 'ano'" (click)="alterarFiltro('ano')">
-          Ano
-        </button>
+      <div class="botoes-filtro" aria-label="Período do relatório">
+        <button type="button" [class.ativo]="filtroAtivo() === 'dia'" (click)="alterarFiltro('dia')">7 dias</button>
+        <button type="button" [class.ativo]="filtroAtivo() === 'mes'" (click)="alterarFiltro('mes')">4 semanas</button>
+        <button type="button" [class.ativo]="filtroAtivo() === 'ano'" (click)="alterarFiltro('ano')">12 meses</button>
       </div>
     </div>
 
     <div class="resumo-grafico">
-      <div>
-        <span class="resumo-label">Total no período</span>
-        <strong>
-          {{ somarDadosGrafico() }}
-          <small>veículos</small>
-        </strong>
+      <div><span class="resumo-label">Total finalizado no período</span>
+        <strong>{{ totalNoPeriodo }} <small>ordens</small></strong>
       </div>
-
-      <div class="legenda-grafico">
-        <span class="legenda-cor"></span>
-        Veículos consertados
-      </div>
+      <div class="legenda-grafico"><span class="legenda-cor"></span>Ordens finalizadas</div>
     </div>
 
-    <div class="grafico-barras">
-      <div class="linhas-fundo">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-      </div>
-
-      @for (item of dadosGrafico[filtroAtivo()]; track item.label) {
-      <div class="coluna-grafico">
-        <div class="barra-container">
-
-          <span class="valor-barra">
-            {{ item.valor }}
-          </span>
-
-          <div class="barra" [style.height.%]="(item.valor / 20) * 100">
+    @if (dados()) {
+      <div class="grafico-barras" role="img" aria-label="Gráfico de ordens finalizadas no período selecionado">
+        <div class="linhas-fundo"><span></span><span></span><span></span><span></span></div>
+        @for (item of dados()!.grafico; track item.label) {
+          <div class="coluna-grafico">
+            <div class="barra-container">
+              <span class="valor-barra">{{ item.valor }}</span>
+              <div class="barra" [style.height.%]="(item.valor / alturaMaxima) * 100"></div>
+            </div>
+            <span class="rotulo">{{ item.label }}</span>
           </div>
-
-        </div>
-
-        <span class="rotulo">
-          {{ item.label }}
-        </span>
+        }
       </div>
-      }
-    </div>
+    }
+    @if (dados() && totalNoPeriodo === 0) {
+      <p class="sem-finalizacoes">Nenhuma ordem foi finalizada nesse período.</p>
+    }
   </div>
 </div>

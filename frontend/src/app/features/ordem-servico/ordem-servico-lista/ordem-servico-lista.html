@@ -1,74 +1,95 @@
-
 <div class="os-painel">
   <header class="painel-header">
-      <h2>Ordens de Serviço</h2>
+    <div>
+      <h1>Ordens de serviço</h1>
+      <p>Acompanhe os serviços em andamento e consulte o histórico de cada atendimento.</p>
+    </div>
+    <button type="button" class="btn-atualizar" (click)="carregarOrdens()">↻ Atualizar</button>
   </header>
 
   <div class="resumo-grid">
-    <div class="resumo-card">
-      <span class="resumo-label">Total de ordens</span>
-      <strong>{{ ordens().length }}</strong>
-      <span class="resumo-legenda">Atendimentos registrados</span>
-    </div>
-
-    <div class="resumo-card">
-      <span class="resumo-label">Aguardando avaliação</span>
-      <strong>{{ totalAguardandoAvaliacao }}</strong>
-      <span class="resumo-legenda">Veículos recém-recebidos</span>
-    </div>
-
-    <div class="resumo-card">
-      <span class="resumo-label">Em manutenção</span>
-      <strong>{{ totalEmManutencao }}</strong>
-      <span class="resumo-legenda">Serviços em execução</span>
-    </div>
-
-    <div class="resumo-card">
-      <span class="resumo-label">Aguardando peças</span>
-      <strong>{{ totalAguardandoPecas }}</strong>
-      <span class="resumo-legenda">Serviço pausado por peças</span>
-    </div>
-
-    <div class="resumo-card">
-      <span class="resumo-label">Prontos para retirada</span>
-      <strong>{{ totalProntos }}</strong>
-      <span class="resumo-legenda">Disponíveis para o cliente</span>
-    </div>
+    <div class="resumo-card"><span class="resumo-label">Em andamento</span><strong>{{ totalEmAndamento }}</strong><span class="resumo-legenda">Ordens ainda abertas</span></div>
+    <div class="resumo-card"><span class="resumo-label">Na fila</span><strong>{{ totalAguardandoAvaliacao }}</strong><span class="resumo-legenda">Aguardando atendimento</span></div>
+    <div class="resumo-card"><span class="resumo-label">Em conserto</span><strong>{{ totalEmManutencao }}</strong><span class="resumo-legenda">Em execução</span></div>
+    <div class="resumo-card"><span class="resumo-label">Finalizadas</span><strong>{{ totalProntos }}</strong><span class="resumo-legenda">Histórico preservado</span></div>
   </div>
 
-  @if (carregando()) {
-    <div class="estado-vazio">Carregando ordens de serviço...</div>
-  }
+  @if (carregando()) { <div class="estado-vazio" role="status">Carregando ordens...</div> }
+  @if (erro()) { <div class="mensagem-erro" role="alert">{{ erro() }}</div> }
+  @if (!carregando() && !erro()) {
+    <section class="abertura-card" aria-labelledby="abertura-titulo">
+      <div class="abertura-texto">
+        <h2 id="abertura-titulo">Novo atendimento</h2>
+        <p>Selecione um veículo para registrar um novo atendimento. O histórico anterior permanece salvo.</p>
+      </div>
+      <div class="abertura-acoes">
+        <label for="veiculo-os">Veículo disponível</label>
+        <div class="abertura-controles">
+          <select id="veiculo-os" [(ngModel)]="veiculoEscolhido" [disabled]="semOrdem().length === 0">
+            <option value="">Selecione um veículo</option>
+            @for (veiculo of semOrdem(); track veiculo._id) {
+              <option [value]="veiculo._id">{{ veiculo.modelo }} · {{ veiculo.placa }}</option>
+            }
+          </select>
+          <button type="button" class="btn-nova" [disabled]="!veiculoEscolhido" (click)="abrirOS()">+ Iniciar atendimento</button>
+        </div>
+        @if (semOrdem().length === 0) {
+          <small>Não há veículos disponíveis. Cadastre um novo veículo ou finalize uma ordem em andamento.</small>
+        }
+      </div>
+    </section>
 
-  @if (erro()) {
-    <div class="mensagem-erro" role="alert">{{ erro() }}</div>
-  }
-
-  @if (!carregando() && !erro() && ordens().length === 0) {
-    <div class="estado-vazio">
-      <h2>Nenhuma ordem de serviço</h2>
-      <p>Cadastre um veículo para iniciar um atendimento.</p>
-      <a routerLink="/painel/veiculos/novo" class="btn-nova">
-        Cadastrar veículo
-      </a>
-    </div>
-  }
-
-  @if (!carregando() && !erro() && ordens().length > 0) {
-    <div class="lista-titulo">
-      <div>
-        <h2>Atendimentos registrados</h2>
+    <section class="lista-secao" aria-labelledby="lista-titulo">
+      <div class="lista-cabecalho">
+        <div><h2 id="lista-titulo">Atendimentos registrados</h2><p>Encontre uma ordem pelo cliente, veículo, placa ou situação.</p></div>
+        <span class="contador">{{ ordens().length }} ordem(ns)</span>
+      </div>
+      <div class="filtros-barra">
+        <label class="busca-container"><span class="sr-only">Pesquisar ordens</span>
+          <input type="search" [ngModel]="busca" (ngModelChange)="mudarBusca($event)" placeholder="Buscar cliente, veículo ou placa..." aria-label="Pesquisar ordens" />
+        </label>
+        <label class="filtro-container"><span class="sr-only">Filtrar por status</span>
+          <select [ngModel]="filtro" (ngModelChange)="mudarFiltro($event)" aria-label="Filtrar por status">
+            <option value="todos">Todos os status</option>
+            <option value="Na Fila">Na fila</option>
+            <option value="Em Conserto">Em conserto</option>
+            <option value="Aguardando Peça">Aguardando peça</option>
+            <option value="Pronto">Pronto</option>
+          </select>
+        </label>
       </div>
 
-      <span class="contador">{{ ordens().length }} ordem(ns)</span>
-    </div>
-
-    <div class="ordens-grid">
-      @for (os of ordens(); track os._id) {
-        <app-ordem-servico-card
-          [os]="os"
-        />
+      @if (ordens().length === 0) {
+        <div class="estado-vazio"><h3>Nenhuma ordem cadastrada</h3><p>Selecione um veículo acima para abrir o primeiro atendimento.</p></div>
+      } @else {
+        @if (emAndamento.length > 0) {
+          <div class="grupo-titulo"><h3>Em andamento</h3><span>{{ emAndamento.length }}</span></div>
+          <div class="ordens-grid">
+            @for (os of emAndamentoVisiveis; track os._id) { <app-ordem-servico-card [os]="os" /> }
+          </div>
+          @if (emAndamentoVisiveis.length < emAndamento.length) {
+            <div class="carregar-mais-area">
+              <span class="carregar-mais-contagem">Exibindo {{ emAndamentoVisiveis.length }} de {{ emAndamento.length }} atendimentos em andamento</span>
+              <button type="button" class="btn-carregar-mais" (click)="carregarMaisEmAndamento()">Carregar mais atendimentos</button>
+            </div>
+          }
+        }
+        @if (historico.length > 0) {
+          <div class="grupo-titulo grupo-historico"><h3>Histórico de ordens finalizadas</h3><span>{{ historico.length }}</span></div>
+          <div class="ordens-grid">
+            @for (os of historicoVisivel; track os._id) { <app-ordem-servico-card [os]="os" /> }
+          </div>
+          @if (historicoVisivel.length < historico.length) {
+            <div class="carregar-mais-area">
+              <span class="carregar-mais-contagem">Exibindo {{ historicoVisivel.length }} de {{ historico.length }} atendimentos finalizados</span>
+              <button type="button" class="btn-carregar-mais" (click)="carregarMaisHistorico()">Carregar mais histórico</button>
+            </div>
+          }
+        }
+        @if (emAndamento.length === 0 && historico.length === 0) {
+          <div class="estado-vazio">Nenhuma ordem corresponde à pesquisa.</div>
+        }
       }
-    </div>
+    </section>
   }
 </div>

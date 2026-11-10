@@ -15,14 +15,14 @@ consultar a situação em tempo real digitando apenas a placa do seu carro.
 
 ## Integrantes, módulos e papéis
 
-| Aluno | Módulo | Papel transversal | GitHub |
-| --- | --- | --- | --- |
-| Vitor | Cadastro de Veículos | PO / Scrum Master | ✏️ |
-| Julia | Cadastro de Clientes | Git e Integração | ✏️ |
-| João | Ordem de Serviço (Fluxo de Estados) | Segurança | ✏️ |
-| Nicolas | Cadastro de Serviços e Valores | Testes e Qualidade | ✏️ |
-| Cibely | Busca Pública de Status | UX/UI e Acessibilidade | ✏️ |
-| Jhuly | Relatórios | Documentação e Apresentação | ✏️ |
+| Aluno   | Módulo                              | Papel transversal           | GitHub |
+| ------- | ----------------------------------- | --------------------------- | ------ |
+| Vitor   | Cadastro de Veículos                | PO / Scrum Master           | ✏️     |
+| Julia   | Cadastro de Clientes                | Git e Integração            | ✏️     |
+| João    | Ordem de Serviço (Fluxo de Estados) | Segurança                   | ✏️     |
+| Nicolas | Cadastro de Serviços e Valores      | Testes e Qualidade          | ✏️     |
+| Cibely  | Busca Pública de Status             | UX/UI e Acessibilidade      | ✏️     |
+| Jhuly   | Relatórios                          | Documentação e Apresentação | ✏️     |
 
 ## Tecnologias
 
@@ -92,14 +92,14 @@ frontend/
 ## ✏️ Regras de negócio implementadas
 
 | Código | Regra | Módulo | Onde está (arquivo) |
-| --- | --- | --- | --- |
-| RN01 | ✏️ | ✏️ | ✏️ |
+| ------ | ----- | ------ | ------------------- |
+| RN01   | ✏️    | ✏️     | ✏️                  |
 
 ## ✏️ Perfis de acesso
 
 | Perfil | O que pode fazer |
-| --- | --- |
-| ✏️ | ✏️ |
+| ------ | ---------------- |
+| ✏️     | ✏️               |
 
 ## ✏️ Decisões técnicas (ADRs)
 

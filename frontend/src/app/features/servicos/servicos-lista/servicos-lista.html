@@ -10,6 +10,8 @@
     </button>
   </div>
 
+  @if (carregando()) { <p>Carregando serviços...</p> }
+  @if (erro()) { <p role="alert" class="mensagem-erro">{{ erro() }}</p> }
   <table class="tabela-servicos">
     <thead>
       <tr>
@@ -21,7 +23,7 @@
       </tr>
     </thead>
     <tbody>
-      @for (s of servicos(); track s.id) {
+      @for (s of servicosVisiveis(); track s._id) {
       <tr>
         <td><strong>{{ s.nome }}</strong></td>
         <td>{{ s.descricao }}</td>
@@ -37,7 +39,7 @@
             Editar
           </button>
 
-          <button type="button" class="btn-excluir" (click)="excluir(s.id)">
+          <button type="button" class="btn-excluir" (click)="excluir(s._id)">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
               stroke-linejoin="round" aria-hidden="true">
               <path d="M18 6L17.2 18a2 2 0 0 1-2 2H8.8a2 2 0 0 1-2-2L6 6" />
@@ -50,6 +52,15 @@
       }
     </tbody>
   </table>
+
+  @if (!carregando() && !erro() && servicos().length > 0) {
+    <div class="carregar-mais-area">
+      <span class="carregar-mais-contagem">Exibindo {{ servicosVisiveis().length }} de {{ servicos().length }} serviços</span>
+      @if (servicosVisiveis().length < servicos().length) {
+        <button type="button" class="btn-carregar-mais" (click)="carregarMais()">Carregar mais serviços</button>
+      }
+    </div>
+  }
 
   <!-- Modal de Formulário -->
   @if (exibirModal) {

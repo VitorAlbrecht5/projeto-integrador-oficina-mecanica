@@ -1,0 +1,40 @@
+GARAGEM PRO - SEED E BOTAO CARREGAR MAIS
+
+O ZIP altera apenas os arquivos listados; foi preparado sobre o ZIP "integracao-mvp-final (1)".
+
+1) Antes de extrair, na pasta do projeto confira a branch e faça backup/commit:
+   git status -sb
+
+2) Extraia na raiz do projeto Windows, com -Force:
+   Expand-Archive -LiteralPath "$env:USERPROFILE\Downloads\garagem-pro-seed-carregar-mais.zip" -DestinationPath "C:\Users\vitor\projeto-integrador-oficina-mecanica" -Force
+
+3) Vá à pasta backend e confirme se backend/.env contém:
+   MONGODB_URI=mongodb://127.0.0.1:27017/oficina_demo_senai
+   ADMIN_EMAIL=seu-email
+   ADMIN_SENHA=sua-senha-forte
+   JWT_SECRET=chave-aleatoria-com-mais-de-32-caracteres
+   ATENCAO: para preservar seu banco habitual, prefira um banco novo (oficina_demo_senai).
+
+4) Execute:
+   cd backend
+   npm run build
+   npm test -- --runInBand
+   npm run seed
+   npm run start:dev
+
+5) Abra novo terminal e execute:
+   cd frontend
+   npm run build
+   npm start
+
+6) Confira:
+   - Login com email/senha do .env;
+   - 20 clientes, 20 carros, 30 serviços, 30 atendimentos de demonstracao;
+   - Busca publica pela placa IAB1A01;
+   - Listagens com botao "Carregar mais"; busca e filtros ainda funcionando;
+   - Relatorios preenchidos;
+   - Se desejar, rode npm run seed mais uma vez: os exemplos nao devem se duplicar.
+
+NENHUM .env REAL ESTA INCLUIDO. O seed nao apaga colecoes.
+
+NOTA: Os arquivos passaram por verificacao de sintaxe e seed testado com mocks na primeira e segunda execucao. Os builds reais dependem das bibliotecas npm e do MongoDB configurados no seu computador.

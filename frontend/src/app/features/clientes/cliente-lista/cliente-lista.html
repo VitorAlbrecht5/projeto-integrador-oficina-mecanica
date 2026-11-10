@@ -3,48 +3,36 @@
     <h2>Gerenciamento de Clientes</h2>
     <a routerLink="novo" class="btn-novo">+ Novo Cliente</a>
   </div>
-
-  @if (clientes().length === 0) {
-  <p class="empty-msg">Nenhum cliente cadastrado no momento.</p>
+  @if (erro()) { <p class="empty-msg" role="alert">{{ erro() }}</p> }
+  @if (carregando()) {
+    <p class="empty-msg">Carregando clientes...</p>
+  } @else if (clientes().length === 0) {
+    <p class="empty-msg">Nenhum cliente ativo cadastrado no momento.</p>
   } @else {
-  <div class="table-responsive">
-    <table class="tabela-clientes">
-      <thead>
-        <tr>
-          <th>Nome Completo</th>
-          <th>CPF</th>
-          <th>Telefone</th>
-          <th>Cidade/UF</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (cliente of clientes(); track cliente.id) {
-        <tr>
-          <td><strong>{{ cliente.nomeCompleto }}</strong></td>
-          <td>{{ cliente.cpf }}</td>
-          <td>{{ cliente.telefone }}</td>
-          <td>{{ cliente.endereco.cidade }} / {{ cliente.endereco.estado }}</td>
-          <td class="acoes">
-            <a [routerLink]="['editar', cliente.id]" class="btn-editar" style="text-decoration: none;">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                stroke-linejoin="round" aria-hidden="true">
-                <path d="M12 20h9" />
-                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z" />
-              </svg>
-              Editar
-            </a>
-            <button class="btn-excluir" (click)="deletar(cliente.id)"><svg viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                aria-hidden="true">
-                <path d="M18 6L17.2 18a2 2 0 0 1-2 2H8.8a2 2 0 0 1-2-2L6 6" />
-                <path d="M4 6h16M10 6V4h4v2" />
-              </svg>Excluir</button>
-          </td>
-        </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+    <div class="table-responsive">
+      <table class="tabela-clientes">
+        <thead><tr><th>Nome Completo</th><th>CPF</th><th>Telefone</th><th>Cidade/UF</th><th>Ações</th></tr></thead>
+        <tbody>
+          @for (cliente of clientesVisiveis(); track cliente._id) {
+            <tr>
+              <td><strong>{{ cliente.nomeCompleto }}</strong></td>
+              <td>{{ cliente.cpf }}</td>
+              <td>{{ cliente.telefone }}</td>
+              <td>{{ cliente.endereco.cidade }} / {{ cliente.endereco.estado }}</td>
+              <td class="acoes">
+                <a [routerLink]="['editar', cliente._id]" class="btn-editar">Editar</a>
+                <button type="button" class="btn-excluir" (click)="deletar(cliente._id)">Desativar</button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <div class="carregar-mais-area">
+      <span class="carregar-mais-contagem">Exibindo {{ clientesVisiveis().length }} de {{ clientes().length }} clientes</span>
+      @if (clientesVisiveis().length < clientes().length) {
+        <button type="button" class="btn-carregar-mais" (click)="carregarMais()">Carregar mais clientes</button>
+      }
+    </div>
   }
 </div>

@@ -1,61 +1,64 @@
-import { Injectable, signal } from '@angular/core';
-import { Cliente } from './cliente.model';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable, inject, signal } from '@angular/core';
+import { Observable, catchError, map, tap, throwError } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { RespostaApi } from '../../core/models/resposta-api';
+import { Cliente, ClienteEntrada } from './cliente.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ClienteService {
-  private clientesMock = signal<Cliente[]>([
-    {
-      id: 1,
-      nomeCompleto: 'Carlos Silva',
-      cpf: '123.456.789-00',
-      telefone: '(11) 98765-4321',
-      email: 'carlos.silva@email.com',
-      endereco: {
-        cep: '01001-000',
-        rua: 'Praça da Sé',
-        numero: '100',
-        bairro: 'Sé',
-        cidade: 'São Paulo',
-        estado: 'SP'
-      },
-      observacoes: 'Cliente prefere contato via WhatsApp.'
-    },
-    {
-      id: 2,
-      nomeCompleto: 'Mariana Souza',
-      cpf: '987.654.321-11',
-      telefone: '(11) 91234-5678',
-      email: 'mariana@email.com',
-      endereco: {
-        cep: '01310-100',
-        rua: 'Avenida Paulista',
-        numero: '1500',
-        complemento: 'Apto 42',
-        bairro: 'Bela Vista',
-        cidade: 'São Paulo',
-        estado: 'SP'
-      }
-    }
-  ]);
+  private readonly http = inject(HttpClient);
+  private readonly url = `${environment.apiUrl}/clientes`;
+  private readonly cache = signal<Cliente[]>([]);
 
-  obterClientes() {
-    return this.clientesMock();
-  }
+  // Compatibilidade temporária com os componentes de Veículos/OS que usam cache síncrono.
+  obterClientes(): Cliente[] { return this.cache(); }
 
-  adicionarCliente(cliente: Cliente) {
-    const novoId = Date.now();
-    this.clientesMock.update(lista => [...lista, { ...cliente, id: novoId }]);
-  }
-
-  atualizarCliente(clienteAtualizado: Cliente) {
-    this.clientesMock.update(lista =>
-      lista.map(c => c.id === clienteAtualizado.id ? clienteAtualizado : c)
+  carregarClientes(): Observable<Cliente[]> {
+    return this.http.get<RespostaApi<Cliente[]>>(this.url).pipe(
+      map(resposta => resposta.dados),
+      tap(lista => this.cache.set(lista)),
+      catchError(this.tratarErro),
     );
   }
 
-  excluirCliente(id: number) {
-    this.clientesMock.update(lista => lista.filter(c => c.id !== id));
+  buscarPorId(id: string): Observable<Cliente> {
+    return this.http.get<RespostaApi<Cliente>>(`${this.url}/${id}`).pipe(
+      map(resposta => resposta.dados),
+      catchError(this.tratarErro),
+    );
+  }
+
+  adicionarCliente(dados: ClienteEntrada): Observable<Cliente> {
+    return this.http.post<RespostaApi<Cliente>>(this.url, dados).pipe(
+      map(resposta => resposta.dados),
+      tap(cliente => this.cache.update(lista => [...lista, cliente])),
+      catchError(this.tratarErro),
+    );
+  }
+
+  atualizarCliente(id: string, dados: Partial<ClienteEntrada>): Observable<Cliente> {
+    return this.http.patch<RespostaApi<Cliente>>(`${this.url}/${id}`, dados).pipe(
+      map(resposta => resposta.dados),
+      tap(cliente => this.cache.update(lista =>
+        lista.map(item => item._id === id ? cliente : item),
+      )),
+      catchError(this.tratarErro),
+    );
+  }
+
+  excluirCliente(id: string): Observable<void> {
+    return this.http.delete<RespostaApi<{ mensagem: string }>>(`${this.url}/${id}`).pipe(
+      tap(() => this.cache.update(lista => lista.filter(item => item._id !== id))),
+      map(() => undefined),
+      catchError(this.tratarErro),
+    );
+  }
+
+  private tratarErro(erro: HttpErrorResponse): Observable<never> {
+    const resposta = erro.error as { message?: string | string[] } | null;
+    const msg = resposta?.message;
+    const mensagem = Array.isArray(msg) ? msg.join(' · ') : msg;
+    return throwError(() => new Error(mensagem || 'Não foi possível comunicar com o servidor.'));
   }
 }

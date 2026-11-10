@@ -451,3 +451,38 @@ textarea:focus {
   opacity: 0.6;
   cursor: not-allowed;
 }
+/* Listagens longas: carregamento progressivo de cartões e linhas. */
+.carregar-mais-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 24px 0 8px;
+  text-align: center;
+}
+.carregar-mais-contagem {
+  font-size: 13px;
+  color: var(--cor-texto-secundario, #64748b);
+}
+.btn-carregar-mais {
+  min-height: 42px;
+  padding: 10px 24px;
+  border: 1px solid var(--cor-primaria, #46101b);
+  border-radius: var(--raio-padrao, 8px);
+  background: var(--cor-primaria, #46101b);
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color .15s ease, border-color .15s ease;
+}
+.btn-carregar-mais:hover {
+  background: var(--cor-primaria-hover, #701121);
+  border-color: var(--cor-primaria-hover, #701121);
+}
+.btn-carregar-mais:focus-visible {
+  outline: 3px solid var(--cor-destaque, #ff914d);
+  outline-offset: 3px;
+}

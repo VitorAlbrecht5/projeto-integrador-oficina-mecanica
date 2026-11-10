@@ -75,7 +75,7 @@
                         <span>PLACA:</span>
                     </div>
 
-                    <div class="placa-numero">{{ veiculo.placa.replace('-', '') }}</div>
+                    <div class="placa-numero">{{ veiculo.placa }}</div>
                 </div>
                 @if (veiculo.imagemUrl) {
                 <div class="imagem-veiculo">
@@ -85,13 +85,10 @@
 
                 <div class="dados-veiculo">
                     <p><strong>Veículo:</strong> {{ veiculo.modelo }}</p>
-                    <!-- <p>
-            <strong>Situação atual:</strong>
-            <span class="situacao">{{ veiculo.status }}</span>
-        </p> -->
+                    <p><strong>Situação atual:</strong> <span class="situacao">{{ veiculo.status }}</span></p>
                 </div>
 
-                <div class="linha-tempo">
+                <div class="linha-tempo" role="status" aria-live="polite">
                     <h3>Andamento do serviço</h3>
 
                     <div class="etapa concluida">
@@ -102,32 +99,32 @@
                         </div>
                     </div>
 
-                    <div class="etapa concluida">
-                        <div class="etapa-ponto">✓</div>
+                    <div class="etapa" [class.concluida]="veiculo.status !== 'Na Fila'" [class.ativa]="veiculo.status === 'Na Fila'">
+                        <div class="etapa-ponto">{{ veiculo.status === 'Na Fila' ? '2' : '✓' }}</div>
                         <div class="etapa-conteudo">
                             <h4>Aguardando avaliação</h4>
                             <p>Cadastro e avaliação inicial.</p>
                         </div>
                     </div>
 
-                    <div class="etapa ativa">
-                        <div class="etapa-ponto">3</div>
+                    <div class="etapa" [class.concluida]="veiculo.status === 'Aguardando Peça' || veiculo.status === 'Pronto'" [class.ativa]="veiculo.status === 'Em Conserto'">
+                        <div class="etapa-ponto">{{ veiculo.status === 'Aguardando Peça' || veiculo.status === 'Pronto' ? '✓' : '3' }}</div>
                         <div class="etapa-conteudo">
                             <h4>Em manutenção</h4>
                             <p>O veículo está em manutenção.</p>
                         </div>
                     </div>
 
-                    <div class="etapa">
-                        <div class="etapa-ponto">4</div>
+                    <div class="etapa" [class.concluida]="veiculo.status === 'Pronto'" [class.ativa]="veiculo.status === 'Aguardando Peça'">
+                        <div class="etapa-ponto">{{ veiculo.status === 'Pronto' ? '✓' : '4' }}</div>
                         <div class="etapa-conteudo">
                             <h4>Aguardando Peças</h4>
                             <p>O serviço está parado até a chegada de peças.</p>
                         </div>
                     </div>
 
-                    <div class="etapa">
-                        <div class="etapa-ponto">5</div>
+                    <div class="etapa" [class.concluida]="veiculo.status === 'Pronto'">
+                        <div class="etapa-ponto">{{ veiculo.status === 'Pronto' ? '✓' : '5' }}</div>
                         <div class="etapa-conteudo">
                             <h4>Pronto para retirada</h4>
                             <p>O veículo está disponível para retirada.</p>
@@ -135,10 +132,31 @@
                     </div>
                 </div>
 
-                <p><strong>Observação:</strong></p>
-                <p class="observacao">
-                    {{ veiculo.defeitoRelatado }}
-                </p>
+                @if (veiculo.observacao) {
+                <section class="informacoes-atendimento" aria-label="Observações da ordem de serviço">
+                    <h3>Observações</h3>
+                    <p class="observacao">{{ veiculo.observacao }}</p>
+                </section>
+                }
+
+                @if (veiculo.servicos.length) {
+                <section class="informacoes-atendimento" aria-label="Serviços do atendimento atual">
+                    <h3>Serviços vinculados ao atendimento</h3>
+                    <ul class="servicos-publicos">
+                        @for (servico of veiculo.servicos; track $index) {
+                        <li>
+                            <span>{{ servico.nome }}</span>
+                            <strong>{{ servico.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+                        </li>
+                        }
+                    </ul>
+                    <div class="total-publico">
+                        <span>Total estimado dos serviços</span>
+                        <strong>{{ veiculo.totalEstimado | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
+                    </div>
+                    <p class="nota-valores">Valores estimados a partir dos preços atuais do catálogo. Não incluem peças ou serviços não cadastrados.</p>
+                </section>
+                }
 
                 } @else {
                 <div class="resultado-erro">
@@ -149,7 +167,7 @@
                                 d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm1-13h-2v6h2V7zm0 8h-2v2h2v-2z" />
                         </svg>
                     </div>
-                    <p>Não encontramos um veículo com essa placa.</p>
+                    <p>{{ erro || 'Não encontramos um veículo com essa placa.' }}</p>
                     <p>Confira a placa digitada e tente novamente.</p>
                 </div>
                 }

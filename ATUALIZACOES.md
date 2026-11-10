@@ -1,11 +1,11 @@
 # Atualizações do repositório base
 
-Cada atualização tem uma etiqueta (*tag*) e diz se o grupo precisa fazer alguma coisa depois do merge.
+Cada atualização tem uma etiqueta (_tag_) e diz se o grupo precisa fazer alguma coisa depois do merge.
 Para receber: veja o **Passo 4** de [`COMECE-AQUI.md`](COMECE-AQUI.md).
 
 ---
 
-## v1.2 — Ajuste dos temas e guia de Git
+## v1.2 - Ajuste dos temas e guia de Git
 
 **Etiqueta:** `base-v1.2`
 
@@ -18,7 +18,7 @@ Para receber: veja o **Passo 4** de [`COMECE-AQUI.md`](COMECE-AQUI.md).
 
 ---
 
-## v1.1 — Aula 02 · Front-end com Angular
+## v1.1 - Aula 02 · Front-end com Angular
 
 **Etiqueta:** `base-v1.1`
 
@@ -31,7 +31,7 @@ Para receber: veja o **Passo 4** de [`COMECE-AQUI.md`](COMECE-AQUI.md).
 
 ---
 
-## v1.0 — Aula 01 · versão inicial
+## v1.0 - Aula 01 · versão inicial
 
 **Etiqueta:** `base-v1.0`
 

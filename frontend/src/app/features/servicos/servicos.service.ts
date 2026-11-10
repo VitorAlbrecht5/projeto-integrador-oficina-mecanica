@@ -1,33 +1,40 @@
-import { Injectable } from '@angular/core';
-import { Servico } from './servicos.model';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable, catchError, map, throwError } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { RespostaApi } from '../../core/models/resposta-api';
+import { Servico, ServicoEntrada } from './servicos.model';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class ServicosService {
-  private servicos: Servico[] = [
-    { id: 1, nome: 'Troca de Óleo', descricao: 'Substituição do óleo do motor e filtro', preco: 150.00, tempoEstimado: '45 min' },
-    { id: 2, nome: 'Alinhamento e Balanceamento', descricao: 'Ajuste da geometria da suspensão e rodas', preco: 120.00, tempoEstimado: '1 hora' },
-    { id: 3, nome: 'Troca de Pastilhas de Freio', descricao: 'Substituição das pastilhas dianteiras', preco: 250.00, tempoEstimado: '1h 30min' }
-  ];
+  private readonly http = inject(HttpClient);
+  private readonly url = `${environment.apiUrl}/servicos`;
 
-  obterServicos(): Servico[] {
-    return this.servicos;
+  obterServicos(): Observable<Servico[]> {
+    return this.http.get<RespostaApi<Servico[]>>(this.url).pipe(
+      map(r => r.dados), catchError(this.tratarErro),
+    );
   }
-
-  adicionarServico(servico: Servico): void {
-    servico.id = new Date().getTime();
-    this.servicos.push(servico);
+  adicionarServico(dados: ServicoEntrada): Observable<Servico> {
+    return this.http.post<RespostaApi<Servico>>(this.url, dados).pipe(
+      map(r => r.dados), catchError(this.tratarErro),
+    );
   }
-
-  atualizarServico(servicoAtualizado: Servico): void {
-    const index = this.servicos.findIndex(s => s.id === servicoAtualizado.id);
-    if (index !== -1) {
-      this.servicos[index] = servicoAtualizado;
-    }
+  atualizarServico(id: string, dados: ServicoEntrada): Observable<Servico> {
+    return this.http.put<RespostaApi<Servico>>(`${this.url}/${id}`, dados).pipe(
+      map(r => r.dados), catchError(this.tratarErro),
+    );
   }
-
-  excluirServico(id: number): void {
-    this.servicos = this.servicos.filter(s => s.id !== id);
+  excluirServico(id: string): Observable<void> {
+    return this.http.delete<RespostaApi<unknown>>(`${this.url}/${id}`).pipe(
+      map(() => undefined), catchError(this.tratarErro),
+    );
+  }
+  private tratarErro(e: HttpErrorResponse): Observable<never> {
+    const corpo = e.error as { message?: string | string[] } | null;
+    const msg = corpo?.message;
+    return throwError(() => new Error(
+      (Array.isArray(msg) ? msg.join(' · ') : msg) || 'Erro ao comunicar com a API de Serviços.',
+    ));
   }
 }

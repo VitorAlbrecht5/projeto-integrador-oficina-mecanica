@@ -1,6 +1,5 @@
 import { Observable } from 'rxjs';
 import { OrdemServico, OrdemServicoInput, StatusOrdemServico } from '../ordem-servico.model';
-
 export abstract class OrdemServicoService {
   abstract listar(): Observable<OrdemServico[]>;
   abstract obterPorId(id: string): Observable<OrdemServico | undefined>;

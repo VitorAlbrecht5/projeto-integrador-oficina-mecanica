@@ -1,21 +1,18 @@
-export type StatusOrdemServico =
-  | 'Veículo recebido - Aguardando Avaliação'
-  | 'Em manutenção'
-  | 'Aguardando Peças'
-  | 'Pronto para retirada';
-
+export type StatusOrdemServico = 'Na Fila' | 'Em Conserto' | 'Aguardando Peça' | 'Pronto';
 export interface OrdemServico {
   _id: string;
   veiculoId: string;
-  clienteId: number;
+  clienteId: string;
   descricaoProblema: string;
   status: StatusOrdemServico;
   dataEntrada: string;
-  servicosIds?: number[];
+  servicosIds: string[];
 }
-
-export type OrdemServicoInput = Omit<OrdemServico, '_id'>;
-
+export interface OrdemServicoInput {
+  veiculoId: string;
+  descricaoProblema: string;
+  servicosIds: string[];
+}
 export interface OrdemServicoExibicao extends OrdemServico {
   veiculo: string;
   placa: string;

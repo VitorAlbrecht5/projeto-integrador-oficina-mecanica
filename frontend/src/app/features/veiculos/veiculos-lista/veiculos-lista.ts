@@ -6,110 +6,86 @@ import { VeiculosService } from '../services/veiculos.service';
 import { Veiculo } from '../veiculo.model';
 import { VeiculoCardComponent } from '../veiculo-card/veiculo-card';
 import { ClienteService } from '../../clientes/cliente.service';
+import { Cliente } from '../../clientes/cliente.model';
 
 @Component({
-  selector: 'app-veiculos-lista',
-  standalone: true,
+  selector: 'app-veiculos-lista', standalone: true,
   imports: [CommonModule, RouterModule, FormsModule, VeiculoCardComponent],
-  templateUrl: './veiculos-lista.html',
-  styleUrls: ['./veiculos-lista.css']
+  templateUrl: './veiculos-lista.html', styleUrls: ['./veiculos-lista.css'],
 })
 export class VeiculosListaComponent implements OnInit {
-  private veiculosService = inject(VeiculosService);
-  private clienteService = inject(ClienteService);
+  private readonly veiculosService = inject(VeiculosService);
+  private readonly clienteService = inject(ClienteService);
+  readonly veiculos = signal<Veiculo[]>([]);
+  readonly clientes = signal<Cliente[]>([]);
+  readonly carregando = signal(true);
+  readonly erroAoCarregar = signal<string | null>(null);
+  readonly termoBusca = signal('');
+  readonly filtroSituacao = signal<'ativos' | 'inativos' | 'todos'>('ativos');
+  readonly quantidadeVisivel = signal(9);
 
-  veiculos = signal<Veiculo[]>([]);
-  carregando = signal<boolean>(true);
-  erroAoCarregar = signal<string | null>(null);
-
-  termoBusca = signal<string>('');
-  filtroSituacao = signal<'ativos' | 'inativos' | 'todos'>('ativos');
-
-  veiculosFiltrados = computed(() => {
+  readonly veiculosFiltrados = computed(() => {
     const termo = this.termoBusca().trim().toLowerCase();
     const filtro = this.filtroSituacao();
-
-    return this.veiculos().filter((veiculo) => {
-      const correspondeSituacao =
-        filtro === 'todos' ||
+    return this.veiculos().filter(veiculo => {
+      const correspondeSituacao = filtro === 'todos' ||
         (filtro === 'ativos' && veiculo.ativo) ||
         (filtro === 'inativos' && !veiculo.ativo);
-
-      const correspondeBusca =
-        veiculo.placa.toLowerCase().includes(termo) ||
+      const correspondeBusca = veiculo.placa.toLowerCase().includes(termo) ||
         veiculo.modelo.toLowerCase().includes(termo);
-
       return correspondeSituacao && correspondeBusca;
     });
   });
 
+  readonly veiculosVisiveis = computed(() =>
+    this.veiculosFiltrados().slice(0, this.quantidadeVisivel())
+  );
+
+  carregarMais(): void {
+    this.quantidadeVisivel.update(qtd => qtd + 9);
+  }
+
+  alterarFiltroSituacao(valor: 'ativos' | 'inativos' | 'todos'): void {
+    this.filtroSituacao.set(valor);
+    this.quantidadeVisivel.set(9);
+  }
 
   ngOnInit() {
     this.carregarVeiculos();
+    this.clienteService.carregarClientes().subscribe({
+      next: clientes => this.clientes.set(clientes),
+      error: () => this.erroAoCarregar.set('Não foi possível consultar os clientes vinculados.'),
+    });
   }
 
   carregarVeiculos() {
     this.carregando.set(true);
     this.erroAoCarregar.set(null);
-
+    this.quantidadeVisivel.set(9);
     this.veiculosService.listar().subscribe({
-      next: (dados) => {
-        this.veiculos.set(dados);
-        this.carregando.set(false);
-      },
-      error: (erro) => {
-        console.error('Erro', erro);
-        this.erroAoCarregar.set('Não foi possível carregar a lista de veículos. Tente novamente.');
-        this.carregando.set(false);
-      }
+      next: veiculos => { this.veiculos.set(veiculos); this.carregando.set(false); },
+      error: (erro: Error) => { this.erroAoCarregar.set(erro.message); this.carregando.set(false); },
     });
   }
 
-  aoDigitarBusca(evento: any) {
-    this.termoBusca.set(evento.target.value);
+  aoDigitarBusca(evento: Event) {
+    this.termoBusca.set((evento.target as HTMLInputElement).value);
+    this.quantidadeVisivel.set(9);
   }
 
-  nomeCliente(clienteId: number): string {
-    const cliente = this.clienteService
-      .obterClientes()
-      .find(c => c.id === clienteId);
-
-    return cliente?.nomeCompleto ?? 'Cliente não encontrado';
+  nomeCliente(id: string) {
+    return this.clientes().find(cliente => cliente._id === id)?.nomeCompleto ?? 'Cliente indisponível';
   }
 
-  alterarSituacao(veiculo: Veiculo): void {
+  alterarSituacao(veiculo: Veiculo) {
     const ativar = !veiculo.ativo;
-    const acao = ativar ? 'ativar' : 'desativar';
-
-    const confirmou = window.confirm(
-      `Deseja ${acao} o veículo ${veiculo.modelo}, placa ${veiculo.placa}?`
-    );
-
-    if (!confirmou) return;
-
-    const operacao = ativar
+    if (!window.confirm(`Deseja ${ativar ? 'ativar' : 'desativar'} o veículo ${veiculo.modelo}, placa ${veiculo.placa}?`)) return;
+    const requisicao = ativar
       ? this.veiculosService.reativar(veiculo._id)
       : this.veiculosService.excluir(veiculo._id);
-
-    operacao.subscribe({
-      next: () => {
-        alert(
-          `Veículo ${ativar ? 'ativado' : 'desativado'} com sucesso!`
-        );
-
-        this.carregarVeiculos();
-      },
-      error: (erro) => {
-        console.error('Erro ao alterar situação do veículo:', erro);
-
-        alert(
-          erro instanceof Error
-            ? erro.message
-            : 'Não foi possível alterar a situação do veículo.'
-        );
-      },
+    requisicao.subscribe({
+      next: () => { this.carregarVeiculos(); },
+      error: (erro: Error) => window.alert(erro.message),
     });
   }
-
 }
-
