@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { RespostaInterceptor } from './common/interceptors/resposta.interceptor';
+import { ExcecoesFilter } from './common/filters/excecoes.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -28,10 +29,15 @@ async function bootstrap() {
   // Padrão único de resposta de sucesso (PDF 04, cap. 14)
   app.useGlobalInterceptors(new RespostaInterceptor());
 
+  // Aula 14: erros padronizados; detalhes técnicos ficam apenas nos logs.
+  app.useGlobalFilters(new ExcecoesFilter());
+
   // Documentação Swagger em http://localhost:3000/api/v1/api/docs (ou ajustado)
   const config = new DocumentBuilder()
-    .setTitle('Projeto Integrador – API')
-    .setDescription('API do Projeto Integrador da Sprint 5')
+    .setTitle('Garagem Pro — API')
+    .setDescription(
+      'Gestão de clientes, veículos, serviços, ordens de serviço e consulta pública por placa.',
+    )
     .setVersion('1.0')
     .addBearerAuth()
     .build();

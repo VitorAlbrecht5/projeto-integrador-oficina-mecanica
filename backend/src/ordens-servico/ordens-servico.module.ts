@@ -7,11 +7,13 @@ import { OrdensServicoService } from './ordens-servico.service';
 import { OrdensServicoController } from './ordens-servico.controller';
 
 @Module({
-  imports: [MongooseModule.forFeature([
-    { name: OrdemServico.name, schema: OrdemServicoSchema },
-    { name: Veiculo.name, schema: VeiculoSchema },
-    { name: Servico.name, schema: ServicoSchema },
-  ])],
+  imports: [
+    MongooseModule.forFeature([
+      { name: OrdemServico.name, schema: OrdemServicoSchema },
+      { name: Veiculo.name, schema: VeiculoSchema },
+      { name: Servico.name, schema: ServicoSchema },
+    ]),
+  ],
   controllers: [OrdensServicoController],
   providers: [OrdensServicoService],
 })

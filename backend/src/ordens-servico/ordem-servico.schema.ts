@@ -1,7 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Types } from 'mongoose';
 
-export const STATUS_ORDEM = ['Na Fila', 'Em Conserto', 'Aguardando Peça', 'Pronto'] as const;
+export const STATUS_ORDEM = [
+  'Na Fila',
+  'Em Conserto',
+  'Aguardando Peça',
+  'Pronto',
+] as const;
 export type StatusOrdem = (typeof STATUS_ORDEM)[number];
 
 @Schema({ timestamps: true })

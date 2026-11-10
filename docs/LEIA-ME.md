@@ -1,11 +1,5 @@
 # Pasta de documentação do grupo
 
-Coloque aqui os documentos do projeto (a partir dos templates entregues pelo professor):
-
-- `documento-de-visao.docx` — aula 01 (C0)
-- `contrato-da-api.docx` — aula 01, atualizado até a aula 13
-- `dicionario-de-dados.docx` — aula 07 (C2)
+- `documento-de-visao.pdf` — aula 01 (C0)
+- `contrato-api.docx` — aula 01, atualizado até a aula 13
 - `plano-de-testes.docx` — aula 05, atualizado até a aula 14
-- `manual-do-usuario.docx` — aula 14 (C5)
-- `roteiro-da-apresentacao.docx` — aula 14 (C5)
-- `respostas-<nome>.md` — respostas às perguntas de verificação do manual

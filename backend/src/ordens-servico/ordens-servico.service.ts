@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -25,6 +26,7 @@ const TRANSICOES: Record<StatusOrdem, StatusOrdem[]> = {
 
 @Injectable()
 export class OrdensServicoService {
+  private readonly logger = new Logger(OrdensServicoService.name);
   constructor(
     @InjectModel(OrdemServico.name) private readonly model: Model<OrdemServico>,
     @InjectModel(Veiculo.name) private readonly veiculos: Model<Veiculo>,
@@ -81,6 +83,7 @@ export class OrdensServicoService {
         { runValidators: true },
       )
       .exec();
+    this.logger.log(`Atendimento aberto: ${String(nova._id)}`);
     return nova;
   }
 
@@ -133,6 +136,13 @@ export class OrdensServicoService {
         },
       )
       .exec();
+    if (novoStatus !== atual.status) {
+      this.logger.log(
+        `Atendimento ${id}: status ${atual.status} -> ${novoStatus}`,
+      );
+    } else {
+      this.logger.log(`Atendimento atualizado: ${id}`);
+    }
     return ordem;
   }
 

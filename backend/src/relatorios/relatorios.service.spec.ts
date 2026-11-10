@@ -13,10 +13,16 @@ describe('RelatoriosService', () => {
     service = new RelatoriosService(model as unknown as Model<OrdemServico>);
   });
 
-  function configurar(status: { _id: string; total: number }[] = [],
-    porDia: { _id: string; total: number }[] = []) {
-    aggregate.mockReturnValueOnce({ exec: jest.fn().mockImplementation(() => status) });
-    aggregate.mockReturnValueOnce({ exec: jest.fn().mockImplementation(() => porDia) });
+  function configurar(
+    status: { _id: string; total: number }[] = [],
+    porDia: { _id: string; total: number }[] = [],
+  ) {
+    aggregate.mockReturnValueOnce({
+      exec: jest.fn().mockImplementation(() => status),
+    });
+    aggregate.mockReturnValueOnce({
+      exec: jest.fn().mockImplementation(() => porDia),
+    });
   }
 
   it('retorna zeros quando não há ordens', async () => {
@@ -45,7 +51,7 @@ describe('RelatoriosService', () => {
     configurar();
     const resultado = await service.obterResumo('dia');
     expect(resultado.grafico).toHaveLength(7);
-    expect(resultado.grafico.every(p => p.valor === 0)).toBe(true);
+    expect(resultado.grafico.every((p) => p.valor === 0)).toBe(true);
   });
 
   it('retorna doze meses no gráfico anual e usa agregação no banco', async () => {

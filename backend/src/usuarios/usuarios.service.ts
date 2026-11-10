@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  Logger,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -18,6 +19,7 @@ export interface CriarUsuario {
 
 @Injectable()
 export class UsuariosService {
+  private readonly logger = new Logger(UsuariosService.name);
   constructor(
     @InjectModel(Usuario.name)
     private readonly model: Model<Usuario>,
@@ -51,6 +53,7 @@ export class UsuariosService {
 
       const usuario = criado.toObject();
 
+      this.logger.log(`Usuário criado: ${String(usuario._id)}`);
       return {
         _id: String(usuario._id),
         nome: usuario.nome,

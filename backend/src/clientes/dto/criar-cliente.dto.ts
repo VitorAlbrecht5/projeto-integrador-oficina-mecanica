@@ -5,7 +5,6 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
-  Length,
   Matches,
   MinLength,
   ValidateNested,
@@ -21,38 +20,52 @@ export class EnderecoDto {
   cep!: string;
 
   @ApiProperty({ example: 'Rua das Flores' })
-  @IsString() @IsNotEmpty() rua!: string;
+  @IsString()
+  @IsNotEmpty()
+  rua!: string;
 
   @ApiProperty({ example: '150' })
-  @IsString() @IsNotEmpty() numero!: string;
+  @IsString()
+  @IsNotEmpty()
+  numero!: string;
 
   @ApiPropertyOptional({ example: 'Casa 2' })
   @Transform(textoOpcional)
-  @IsOptional() @IsString() complemento?: string;
+  @IsOptional()
+  @IsString()
+  complemento?: string;
 
   @ApiProperty({ example: 'Centro' })
-  @IsString() @IsNotEmpty() bairro!: string;
+  @IsString()
+  @IsNotEmpty()
+  bairro!: string;
 
   @ApiProperty({ example: 'Esteio' })
-  @IsString() @IsNotEmpty() cidade!: string;
+  @IsString()
+  @IsNotEmpty()
+  cidade!: string;
 
   @ApiProperty({ example: 'RS' })
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.trim().toUpperCase() : value,
   )
-  @IsString() @Matches(/^[A-Z]{2}$/, { message: 'Informe a UF com 2 letras.' })
+  @IsString()
+  @Matches(/^[A-Z]{2}$/, { message: 'Informe a UF com 2 letras.' })
   estado!: string;
 }
 
 export class CriarClienteDto {
   @ApiProperty({ example: 'Mariana de Souza' })
-  @IsString() @MinLength(3) nomeCompleto!: string;
+  @IsString()
+  @MinLength(3)
+  nomeCompleto!: string;
 
   @ApiProperty({ example: '123.456.789-09' })
   @Transform(({ value }: { value: unknown }) =>
     typeof value === 'string' ? value.replace(/\D/g, '') : value,
   )
-  @IsString() @Matches(/^\d{11}$/, { message: 'CPF deve conter 11 dígitos.' })
+  @IsString()
+  @Matches(/^\d{11}$/, { message: 'CPF deve conter 11 dígitos.' })
   cpf!: string;
 
   @ApiProperty({ example: '(51) 99999-8888' })
@@ -64,13 +77,18 @@ export class CriarClienteDto {
 
   @ApiPropertyOptional({ example: 'mariana@email.com' })
   @Transform(textoOpcional)
-  @IsOptional() @IsEmail() email?: string;
+  @IsOptional()
+  @IsEmail()
+  email?: string;
 
   @ApiProperty({ type: EnderecoDto })
-  @ValidateNested() @Type(() => EnderecoDto)
+  @ValidateNested()
+  @Type(() => EnderecoDto)
   endereco!: EnderecoDto;
 
   @ApiPropertyOptional({ example: 'Prefere WhatsApp' })
   @Transform(textoOpcional)
-  @IsOptional() @IsString() observacoes?: string;
+  @IsOptional()
+  @IsString()
+  observacoes?: string;
 }

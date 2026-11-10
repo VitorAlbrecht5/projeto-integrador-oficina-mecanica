@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
@@ -12,7 +13,10 @@ import { AtualizarClienteDto } from './dto/atualizar-cliente.dto';
 
 @Injectable()
 export class ClientesService {
-  constructor(@InjectModel(Cliente.name) private readonly model: Model<Cliente>) {}
+  private readonly logger = new Logger(ClientesService.name);
+  constructor(
+    @InjectModel(Cliente.name) private readonly model: Model<Cliente>,
+  ) {}
 
   listar() {
     return this.model.find({ ativo: true }).sort({ nomeCompleto: 1 }).exec();
@@ -27,7 +31,9 @@ export class ClientesService {
 
   async criar(dados: CriarClienteDto) {
     try {
-      return await this.model.create(dados);
+      const cliente = await this.model.create(dados);
+      this.logger.log(`Cliente cadastrado: ${String(cliente._id)}`);
+      return cliente;
     } catch (erro: unknown) {
       this.verificarCpfDuplicado(erro);
       throw erro;
@@ -37,12 +43,14 @@ export class ClientesService {
   async atualizar(id: string, dados: AtualizarClienteDto) {
     await this.buscarPorId(id);
     try {
-      const atualizado = await this.model.findOneAndUpdate(
-        { _id: id, ativo: true },
-        dados,
-        { new: true, runValidators: true },
-      ).exec();
+      const atualizado = await this.model
+        .findOneAndUpdate({ _id: id, ativo: true }, dados, {
+          new: true,
+          runValidators: true,
+        })
+        .exec();
       if (!atualizado) throw new NotFoundException('Cliente não encontrado.');
+      this.logger.log(`Cliente atualizado: ${id}`);
       return atualizado;
     } catch (erro: unknown) {
       this.verificarCpfDuplicado(erro);
@@ -52,12 +60,15 @@ export class ClientesService {
 
   async desativar(id: string) {
     await this.buscarPorId(id);
-    const cliente = await this.model.findOneAndUpdate(
-      { _id: id, ativo: true },
-      { ativo: false },
-      { new: true, runValidators: true },
-    ).exec();
+    const cliente = await this.model
+      .findOneAndUpdate(
+        { _id: id, ativo: true },
+        { ativo: false },
+        { new: true, runValidators: true },
+      )
+      .exec();
     if (!cliente) throw new NotFoundException('Cliente não encontrado.');
+    this.logger.log(`Cliente desativado: ${id}`);
     return { mensagem: 'Cliente desativado com sucesso.' };
   }
 

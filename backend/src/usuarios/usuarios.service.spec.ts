@@ -1,4 +1,4 @@
-import { ConflictException } from '@nestjs/common';
+import { BadRequestException, ConflictException } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test } from '@nestjs/testing';
 import * as bcrypt from 'bcryptjs';
@@ -67,5 +67,17 @@ describe('UsuariosService (testes que precisam passar na aula 12)', () => {
         perfil: 'atendente',
       }),
     ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('recusa senha curta antes de consultar o banco', async () => {
+    await expect(
+      service.criar({
+        nome: 'Ana',
+        email: 'ana@email.com',
+        senha: '123',
+        perfil: 'admin',
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+    expect(modelMock.findOne).not.toHaveBeenCalled();
   });
 });

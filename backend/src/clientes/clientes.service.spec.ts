@@ -1,14 +1,32 @@
 import { Test } from '@nestjs/testing';
 import { getModelToken } from '@nestjs/mongoose';
-import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Cliente } from './schemas/cliente.schema';
 import { ClientesService } from './clientes.service';
 
 const ID = '507f1f77bcf86cd799439011';
-const cliente = { _id: ID, nomeCompleto: 'Mariana', cpf: '12345678909', ativo: true };
+const cliente = {
+  _id: ID,
+  nomeCompleto: 'Mariana',
+  cpf: '12345678909',
+  ativo: true,
+};
 const dados = {
-  nomeCompleto: 'Mariana', cpf: '12345678909', telefone: '51999998888',
-  endereco: { cep: '93210100', rua: 'Rua Um', numero: '1', bairro: 'Centro', cidade: 'Esteio', estado: 'RS' },
+  nomeCompleto: 'Mariana',
+  cpf: '12345678909',
+  telefone: '51999998888',
+  endereco: {
+    cep: '93210100',
+    rua: 'Rua Um',
+    numero: '1',
+    bairro: 'Centro',
+    cidade: 'Esteio',
+    estado: 'RS',
+  },
 };
 
 describe('ClientesService', () => {
@@ -23,7 +41,10 @@ describe('ClientesService', () => {
   beforeEach(async () => {
     jest.resetAllMocks();
     const modulo = await Test.createTestingModule({
-      providers: [ClientesService, { provide: getModelToken(Cliente.name), useValue: model }],
+      providers: [
+        ClientesService,
+        { provide: getModelToken(Cliente.name), useValue: model },
+      ],
     }).compile();
     service = modulo.get(ClientesService);
   });
@@ -37,12 +58,16 @@ describe('ClientesService', () => {
   });
 
   it('busca um cliente por ID', async () => {
-    model.findOne.mockReturnValue({ exec: jest.fn().mockResolvedValue(cliente) });
+    model.findOne.mockReturnValue({
+      exec: jest.fn().mockResolvedValue(cliente),
+    });
     expect(await service.buscarPorId(ID)).toEqual(cliente);
   });
 
   it('rejeita ID inválido', async () => {
-    await expect(service.buscarPorId('nao-e-um-id')).rejects.toThrow(BadRequestException);
+    await expect(service.buscarPorId('nao-e-um-id')).rejects.toThrow(
+      BadRequestException,
+    );
   });
 
   it('cadastra um cliente', async () => {
@@ -57,18 +82,30 @@ describe('ClientesService', () => {
   });
 
   it('altera um cliente existente', async () => {
-    model.findOne.mockReturnValue({ exec: jest.fn().mockResolvedValue(cliente) });
-    model.findOneAndUpdate.mockReturnValue({ exec: jest.fn().mockResolvedValue({ ...cliente, nomeCompleto: 'Maria' }) });
+    model.findOne.mockReturnValue({
+      exec: jest.fn().mockResolvedValue(cliente),
+    });
+    model.findOneAndUpdate.mockReturnValue({
+      exec: jest.fn().mockResolvedValue({ ...cliente, nomeCompleto: 'Maria' }),
+    });
     const atualizado = await service.atualizar(ID, { nomeCompleto: 'Maria' });
     expect(atualizado.nomeCompleto).toBe('Maria');
   });
 
   it('desativa sem excluir fisicamente', async () => {
-    model.findOne.mockReturnValue({ exec: jest.fn().mockResolvedValue(cliente) });
-    model.findOneAndUpdate.mockReturnValue({ exec: jest.fn().mockResolvedValue({ ...cliente, ativo: false }) });
-    expect(await service.desativar(ID)).toEqual({ mensagem: 'Cliente desativado com sucesso.' });
+    model.findOne.mockReturnValue({
+      exec: jest.fn().mockResolvedValue(cliente),
+    });
+    model.findOneAndUpdate.mockReturnValue({
+      exec: jest.fn().mockResolvedValue({ ...cliente, ativo: false }),
+    });
+    expect(await service.desativar(ID)).toEqual({
+      mensagem: 'Cliente desativado com sucesso.',
+    });
     expect(model.findOneAndUpdate).toHaveBeenCalledWith(
-      { _id: ID, ativo: true }, { ativo: false }, { new: true, runValidators: true },
+      { _id: ID, ativo: true },
+      { ativo: false },
+      { new: true, runValidators: true },
     );
   });
 

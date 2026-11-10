@@ -5,16 +5,25 @@ import { normalizarPlaca } from '../normalizar-placa';
 import { normalizarStatusVeiculo } from '../normalizar-status';
 
 export const STATUS_VEICULO = [
-  'Na Fila', 'Em Conserto', 'Aguardando Peça', 'Pronto',
+  'Na Fila',
+  'Em Conserto',
+  'Aguardando Peça',
+  'Pronto',
 ] as const;
 export type StatusVeiculo = (typeof STATUS_VEICULO)[number];
 export type VeiculoDocument = HydratedDocument<Veiculo>;
 
 @Schema({ timestamps: true, collection: 'veiculos' })
 export class Veiculo {
-  @Prop({ required: true, trim: true, uppercase: true, minlength: 7,
-    maxlength: 7, set: normalizarPlaca,
-    match: /^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/ })
+  @Prop({
+    required: true,
+    trim: true,
+    uppercase: true,
+    minlength: 7,
+    maxlength: 7,
+    set: normalizarPlaca,
+    match: /^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/,
+  })
   placa!: string;
 
   @Prop({ required: true, trim: true, minlength: 1, maxlength: 40 })
@@ -23,19 +32,33 @@ export class Veiculo {
   @Prop({ required: true, trim: true })
   cor!: string;
 
-  @Prop({ required: true, min: 1950, max: 2100,
-    validate: { validator: Number.isInteger,
-      message: 'O ano deve ser um número inteiro.' } })
+  @Prop({
+    required: true,
+    min: 1950,
+    max: 2100,
+    validate: {
+      validator: Number.isInteger,
+      message: 'O ano deve ser um número inteiro.',
+    },
+  })
   ano!: number;
 
   @Prop({ required: true, trim: true })
   defeitoRelatado!: string;
 
-  @Prop({ type: String, enum: STATUS_VEICULO, default: 'Na Fila',
-    set: normalizarStatusVeiculo })
+  @Prop({
+    type: String,
+    enum: STATUS_VEICULO,
+    default: 'Na Fila',
+    set: normalizarStatusVeiculo,
+  })
   status!: StatusVeiculo;
 
-  @Prop({ type: MongooseSchema.Types.ObjectId, ref: Cliente.name, required: true })
+  @Prop({
+    type: MongooseSchema.Types.ObjectId,
+    ref: Cliente.name,
+    required: true,
+  })
   clienteId!: Types.ObjectId;
 
   @Prop({ default: true })

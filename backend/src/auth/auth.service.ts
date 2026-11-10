@@ -1,10 +1,11 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
 import { UsuariosService } from '../usuarios/usuarios.service';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   constructor(
     private readonly usuarios: UsuariosService,
     private readonly jwt: JwtService,
@@ -24,8 +25,11 @@ export class AuthService {
     }
 
     if (!usuario || !confere) {
+      // Não registrar endereço de e-mail ou senha em logs.
+      this.logger.warn('Tentativa de login recusada');
       throw new UnauthorizedException('Credenciais inválidas');
     }
+    this.logger.log(`Login realizado: usuário ${usuario._id}`);
 
     const accessToken = await this.jwt.signAsync({
       sub: usuario._id,
