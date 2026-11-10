@@ -206,3 +206,23 @@
 
      
  }
+/* Ajustes de organização da ficha de atendimento */
+.link-voltar { display:inline-flex; margin-bottom:18px; font-size:13px; text-decoration:none; font-weight:600; color:var(--cor-primaria,#1769aa); }
+.cabecalho-introducao { display:flex; justify-content:space-between; align-items:start; gap:18px; }
+.cabecalho-introducao h2 { margin:0 0 8px; font-size:clamp(22px,3vw,29px); color:var(--cor-texto,#202b3c); }
+.cabecalho-introducao p { margin:0; color:var(--cor-texto-secundario,#69758a); line-height:1.5; }
+.os-identificador { white-space:nowrap; font-size:12px; font-weight:700; padding:9px 12px; background:var(--cor-superficie,#fff); border:1px solid var(--cor-borda,#e1e6ed); border-radius:8px; color:var(--cor-texto-secundario,#69758a); }
+.secao-titulo { display:flex; align-items:flex-start; gap:14px; margin-bottom:22px; }
+.secao-titulo h3 { margin:0 0 5px; }
+.secao-titulo p { margin:0; color:var(--cor-texto-secundario,#69758a); line-height:1.5; font-size:13px; }
+.secao-numero { display:grid; place-items:center; flex:0 0 34px; height:34px; background:var(--cor-fundo,#f4f8fc); color:var(--cor-primaria,#1769aa); border-radius:9px; font-size:13px; font-weight:800; }
+.campo-status { max-width:400px; }
+.ajuda-campo { color:var(--cor-texto-secundario,#69758a); font-size:12px; line-height:1.55; }
+.estado-vazio-servicos { padding:18px; border:1px dashed var(--cor-borda,#e1e6ed); border-radius:9px; background:var(--cor-fundo,#f4f8fc); font-size:13px; color:var(--cor-texto-secundario,#69758a); }
+.aviso-finalizada { padding:14px 18px; margin-bottom:18px; border:1px solid #c8dfd0; background:#f1faf4; border-radius:8px; color:#256441; font-size:13px; line-height:1.5; }
+.servico-item.servico-selecionado { border-color:var(--cor-primaria,#1769aa); background:var(--cor-fundo,#f4f8fc); }
+.btn-salvar { padding:12px 18px; border-radius:8px; border:1px solid var(--cor-primaria,#1769aa); background:var(--cor-primaria,#1769aa); color:#fff; font:inherit; font-size:13px; font-weight:700; cursor:pointer; }
+.btn-salvar:hover:not(:disabled) { filter:brightness(.9); }
+.btn-salvar:disabled { opacity:.55; cursor:wait; }
+.btn-cancelar { display:inline-flex; align-items:center; text-decoration:none; padding:11px 18px; border:1px solid var(--cor-borda,#e1e6ed); border-radius:8px; color:var(--cor-texto,#202b3c); font-size:13px; font-weight:650; }
+@media(max-width:600px){ .cabecalho-introducao {flex-direction:column;} .acoes-formulario {align-items:stretch;} .btn-cancelar,.btn-salvar {justify-content:center; text-align:center;} }

@@ -1,101 +1,87 @@
-import { Component, inject, signal, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-import { combineLatest, forkJoin } from 'rxjs';
-
+import { Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { forkJoin } from 'rxjs';
 import { OrdemServicoService } from '../services/ordem-servico.service';
-import { OrdemServicoExibicao, StatusOrdemServico } from '../ordem-servico.model';
+import { OrdemServicoExibicao } from '../ordem-servico.model';
 import { OrdemServicoCard } from '../ordem-servico-card/ordem-servico-card';
 import { VeiculosService } from '../../veiculos/services/veiculos.service';
+import { Veiculo } from '../../veiculos/veiculo.model';
 import { ClienteService } from '../../clientes/cliente.service';
 
 @Component({
   selector: 'app-ordem-servico-lista',
   standalone: true,
-  imports: [CommonModule, RouterLink, OrdemServicoCard],
+  imports: [CommonModule, FormsModule, OrdemServicoCard],
   templateUrl: './ordem-servico-lista.html',
   styleUrl: './ordem-servico-lista.css',
 })
 export class OrdemServicoLista implements OnInit {
-  private service = inject(OrdemServicoService);
-  private veiculosService = inject(VeiculosService);
-  private clienteService = inject(ClienteService);
-
+  private readonly router = inject(Router);
+  private readonly service = inject(OrdemServicoService);
+  private readonly veiculosService = inject(VeiculosService);
+  private readonly clienteService = inject(ClienteService);
   ordens = signal<OrdemServicoExibicao[]>([]);
+  semOrdem = signal<Veiculo[]>([]);
   carregando = signal(true);
   erro = signal<string | null>(null);
+  veiculoEscolhido = '';
+  busca = '';
+  filtro = 'todos';
 
-  get totalAguardandoAvaliacao(): number {
-    return this.ordens().filter(os => os.status === 'Veículo recebido - Aguardando Avaliação').length;
+  get emAndamento(): OrdemServicoExibicao[] { return this.filtrar(this.ordens().filter(o => o.status !== 'Pronto')); }
+  get historico(): OrdemServicoExibicao[] { return this.filtrar(this.ordens().filter(o => o.status === 'Pronto')); }
+  get totalEmAndamento(): number { return this.ordens().filter(o => o.status !== 'Pronto').length; }
+  private filtrar(itens: OrdemServicoExibicao[]): OrdemServicoExibicao[] {
+    const q = this.busca.trim().toLowerCase();
+    return itens.filter(o =>
+      (this.filtro === 'todos' || o.status === this.filtro) &&
+      (!q || [o.veiculo, o.placa, o.cliente, o.descricaoProblema].some(valor => valor.toLowerCase().includes(q)))
+    );
   }
-  get totalEmManutencao(): number {
-    return this.ordens().filter(os => os.status === 'Em manutenção').length;
+  abrirOS(): void {
+    if (this.veiculoEscolhido) {
+      this.router.navigate(['/painel/ordem-servico/nova', this.veiculoEscolhido]);
+    }
   }
-  get totalAguardandoPecas(): number {
-    return this.ordens().filter(os => os.status === 'Aguardando Peças').length;
-  }
-  get totalProntos(): number {
-    return this.ordens().filter(os => os.status === 'Pronto para retirada').length;
-  }
+
+
+  get totalAguardandoAvaliacao(): number { return this.ordens().filter(o => o.status === 'Na Fila').length; }
+  get totalEmManutencao(): number { return this.ordens().filter(o => o.status === 'Em Conserto').length; }
+  get totalAguardandoPecas(): number { return this.ordens().filter(o => o.status === 'Aguardando Peça').length; }
+  get totalProntos(): number { return this.ordens().filter(o => o.status === 'Pronto').length; }
 
   ngOnInit(): void { this.carregarOrdens(); }
-
   carregarOrdens(): void {
-    this.carregando.set(true);
-    this.erro.set(null);
-    combineLatest([this.service.listar(), this.veiculosService.listar()]).subscribe({
-      next: ([ordens, veiculos]) => {
-        const clientes = this.clienteService.obterClientes();
+    this.carregando.set(true); this.erro.set(null);
+    forkJoin({
+      ordens: this.service.listar(),
+      veiculos: this.veiculosService.listar(),
+      clientes: this.clienteService.carregarClientes(),
+    }).subscribe({
+      next: ({ ordens, veiculos, clientes }) => {
         const ativos = veiculos.filter(v => v.ativo);
-        const veiculosSemOrdem = ativos.filter(v => !ordens.some(o => o.veiculoId === v._id));
-
-        // Garante uma ordem para cada veículo ativo já cadastrado no mock.
-        if (veiculosSemOrdem.length > 0) {
-          forkJoin(veiculosSemOrdem.map(veiculo => this.service.criar({
-            veiculoId: veiculo._id,
-            clienteId: veiculo.clienteId,
-            descricaoProblema: veiculo.defeitoRelatado,
-            status: veiculo.status as StatusOrdemServico,
-            dataEntrada: new Date().toISOString().slice(0, 10),
-            servicosIds: [],
-          }))).subscribe({
-            next: () => this.carregarOrdens(),
-            error: () => {
-              this.erro.set('Não foi possível criar as ordens dos veículos cadastrados.');
-              this.carregando.set(false);
-            },
-          });
-          return;
-        }
-
-        const exibicao: OrdemServicoExibicao[] = ativos.map(veiculo => {
-          const ordem = ordens.find(o => o.veiculoId === veiculo._id);
-          const cliente = clientes.find(c => c.id === (ordem?.clienteId ?? veiculo.clienteId));
-          return {
-            ...(ordem ?? {
-              _id: `sem-os-${veiculo._id}`,
-              veiculoId: veiculo._id,
-              clienteId: veiculo.clienteId,
-              descricaoProblema: veiculo.defeitoRelatado,
-              status: veiculo.status as StatusOrdemServico,
-              dataEntrada: new Date().toISOString().slice(0, 10),
-              servicosIds: [],
-            }),
+        const mapaVeiculos = new Map(veiculos.map(v => [v._id, v]));
+        const mapaClientes = new Map(clientes.map(c => [c._id, c]));
+        this.semOrdem.set(ativos.filter(v => !ordens.some(o => o.veiculoId === v._id && o.status !== 'Pronto')));
+        if (!this.semOrdem().some(v => v._id === this.veiculoEscolhido)) this.veiculoEscolhido = ''; 
+        this.ordens.set(ordens.flatMap(ordem => {
+          const veiculo = mapaVeiculos.get(ordem.veiculoId);
+          if (!veiculo) return [];
+          return [{
+            ...ordem,
             veiculo: veiculo.modelo,
             placa: veiculo.placa,
-            cliente: cliente?.nomeCompleto ?? 'Cliente não encontrado',
+            cliente: mapaClientes.get(ordem.clienteId)?.nomeCompleto ?? 'Cliente não encontrado',
             ano: veiculo.ano,
             cor: veiculo.cor,
             imagemUrl: veiculo.imagemUrl,
-          };
-        });
-        this.ordens.set(exibicao);
+          }];
+        }));
         this.carregando.set(false);
       },
-      error: () => {
-        this.erro.set('Não foi possível carregar as ordens de serviço.');
-        this.carregando.set(false);
-      },
+      error: (e: Error) => { this.erro.set(e.message || 'Erro ao carregar ordens.'); this.carregando.set(false); },
     });
   }
 }

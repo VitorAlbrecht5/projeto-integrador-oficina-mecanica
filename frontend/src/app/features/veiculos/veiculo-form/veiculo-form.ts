@@ -1,18 +1,7 @@
-
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  RouterModule,
-  Router,
-  ActivatedRoute
-} from '@angular/router';
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  ReactiveFormsModule
-} from '@angular/forms';
-
+import { RouterModule, Router, ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { VeiculosService } from '../services/veiculos.service';
 import { ClienteService } from '../../clientes/cliente.service';
 import { Cliente } from '../../clientes/cliente.model';
@@ -25,60 +14,46 @@ import { Cliente } from '../../clientes/cliente.model';
   styleUrls: ['./veiculo-form.css'],
 })
 export class VeiculoFormComponent implements OnInit {
-  private formBuilder = inject(FormBuilder);
-  private veiculosService = inject(VeiculosService);
-  private clienteService = inject(ClienteService);
-  private router = inject(Router);
-  private route = inject(ActivatedRoute);
+  private readonly fb = inject(FormBuilder);
+  private readonly veiculosService = inject(VeiculosService);
+  private readonly clienteService = inject(ClienteService);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   form!: FormGroup;
   salvando = false;
   carregando = false;
+  carregandoClientes = true;
   erro: string | null = null;
-  erroImagem: boolean = false;
+  erroImagem = false;
   clientes: Cliente[] = [];
   idVeiculo: string | null = null;
 
   readonly anoMinimo = 1950;
   readonly anoMaximo = new Date().getFullYear() + 1;
 
-  get modoEdicao(): boolean {
-    return this.idVeiculo !== null;
-  }
+  get modoEdicao() { return this.idVeiculo !== null; }
 
   ngOnInit() {
-    this.clientes = this.clienteService.obterClientes();
-
     this.iniciarFormulario();
-
     this.idVeiculo = this.route.snapshot.paramMap.get('id');
-
-    if (this.modoEdicao) {
-      this.carregarVeiculo();
-    }
+    this.clienteService.carregarClientes().subscribe({
+      next: clientes => { this.clientes = clientes; this.carregandoClientes = false; },
+      error: (erro: Error) => {
+        this.erro = `Não foi possível carregar os clientes: ${erro.message}`;
+        this.carregandoClientes = false;
+      },
+    });
+    if (this.modoEdicao) this.carregarVeiculo();
   }
 
   iniciarFormulario() {
-    this.form = this.formBuilder.group({
-      placa: [
-        '',
-        [
-          Validators.required,
-          Validators.pattern(/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/i),
-        ],
-      ],
-
+    this.form = this.fb.group({
+      placa: ['', [Validators.required, Validators.pattern(/^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/i)]],
       clienteId: [null, Validators.required],
       modelo: ['', Validators.required],
       cor: ['', Validators.required],
-      ano: [
-        '',
-        [
-          Validators.required,
-          Validators.min(this.anoMinimo),
-          Validators.max(this.anoMaximo),
-        ],
-      ],
+      ano: ['', [Validators.required, Validators.min(this.anoMinimo), Validators.max(this.anoMaximo)]],
       defeitoRelatado: ['', Validators.required],
       imagemUrl: [''],
     });
@@ -86,12 +61,9 @@ export class VeiculoFormComponent implements OnInit {
 
   carregarVeiculo() {
     if (!this.idVeiculo) return;
-
     this.carregando = true;
-    this.erro = null;
-
     this.veiculosService.buscarPorId(this.idVeiculo).subscribe({
-      next: (veiculo) => {
+      next: veiculo => {
         this.form.patchValue({
           placa: veiculo.placa,
           clienteId: veiculo.clienteId,
@@ -101,106 +73,48 @@ export class VeiculoFormComponent implements OnInit {
           defeitoRelatado: veiculo.defeitoRelatado,
           imagemUrl: veiculo.imagemUrl ?? '',
         });
-
-
-        // A placa é a identificação do veículo e não pode ser alterada.
         this.form.get('placa')?.disable();
-
         if (!veiculo.ativo) {
           this.form.disable();
-
-          this.erro =
-            'Este veículo está desativado. Ative-o na lista antes de editar.';
+          this.erro = 'Este veículo está desativado. Ative-o na lista antes de editar.';
         }
-
-
         this.carregando = false;
       },
-      error: (erro) => {
-        console.error('Erro ao carregar veículo:', erro);
-        this.erro = 'Não foi possível carregar o veículo para edição.';
+      error: (erro: Error) => {
+        this.erro = `Não foi possível carregar o veículo: ${erro.message}`;
         this.carregando = false;
       },
     });
   }
 
-  normalizarPlaca(): void {
+  normalizarPlaca() {
     const campo = this.form.get('placa');
-
     if (!campo || campo.disabled) return;
-
-    const placa = String(campo.value ?? '')
-      .trim()
-      .replace(/-/g, '')
-      .toUpperCase();
-
-    campo.setValue(placa, { emitEvent: false });
+    campo.setValue(String(campo.value ?? '').trim().replace(/-/g, '').toUpperCase(), {
+      emitEvent: false,
+    });
   }
 
-
-
   salvar() {
-    if (this.form.disabled) return;
+    if (this.form.disabled || this.salvando || this.carregandoClientes) return;
     this.normalizarPlaca();
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
+    if (this.form.invalid) { this.form.markAllAsTouched(); return; }
     this.salvando = true;
     this.erro = null;
-
-    // getRawValue() inclui a placa mesmo estando desabilitada.
     const dados = this.form.getRawValue();
-
-    if (this.idVeiculo) {
-      this.veiculosService.atualizar(this.idVeiculo, {
-        clienteId: dados.clienteId,
-        modelo: dados.modelo,
-        cor: dados.cor,
-        ano: Number(dados.ano),
-        defeitoRelatado: dados.defeitoRelatado,
-        imagemUrl: dados.imagemUrl?.trim() || '',
-      }).subscribe({
-        next: () => {
-          this.salvando = false;
-          this.router.navigate(['/painel/veiculos']);
-        },
-        error: (erro) => {
-          console.error('Erro ao atualizar veículo:', erro);
-          this.erro = erro instanceof Error
-            ? erro.message
-            : 'Não foi possível atualizar o veículo.';
-
-          this.salvando = false;
-        },
-      });
-
-      return;
-    }
-
-    this.veiculosService.criar({
-      placa: dados.placa,
-      clienteId: dados.clienteId,
-      modelo: dados.modelo,
-      cor: dados.cor,
-      ano: Number(dados.ano),
-      defeitoRelatado: dados.defeitoRelatado,
+    const corpo = {
+      clienteId: String(dados.clienteId), modelo: dados.modelo, cor: dados.cor,
+      ano: Number(dados.ano), defeitoRelatado: dados.defeitoRelatado,
       imagemUrl: dados.imagemUrl?.trim() || '',
-      status: 'Veículo recebido - Aguardando Avaliação',
-    }).subscribe({
-      next: () => {
-        this.salvando = false;
-        this.router.navigate(['/painel/veiculos']);
-      },
-      error: (erro) => {
-        console.error('Erro ao cadastrar veículo:', erro);
-        this.erro = erro instanceof Error
-          ? erro.message
-          : 'Não foi possível cadastrar o veículo.';
+    };
 
-        this.salvando = false;
-      },
+    const requisicao = this.idVeiculo
+      ? this.veiculosService.atualizar(this.idVeiculo, corpo)
+      : this.veiculosService.criar({ ...corpo, placa: dados.placa, status: 'Na Fila' });
+
+    requisicao.subscribe({
+      next: () => { this.salvando = false; void this.router.navigate(['/painel/veiculos']); },
+      error: (erro: Error) => { this.salvando = false; this.erro = erro.message; },
     });
   }
 }

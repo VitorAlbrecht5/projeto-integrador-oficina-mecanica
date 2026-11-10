@@ -1,68 +1,69 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ServicosService } from '../servicos.service';
-import { Servico } from '../servicos.model';
+import { Servico, ServicoEntrada } from '../servicos.model';
 
 @Component({
   selector: 'app-servicos-lista',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './servicos-lista.html',
-  styleUrls: ['./servicos-lista.css']
+  styleUrls: ['./servicos-lista.css'],
 })
-export class ServicosLista {
-  private servicosService = inject(ServicosService);
-  private fb = inject(FormBuilder);
-
-  servicos = signal<Servico[]>(this.servicosService.obterServicos());
+export class ServicosLista implements OnInit {
+  private readonly service = inject(ServicosService);
+  private readonly fb = inject(FormBuilder);
+  servicos = signal<Servico[]>([]);
+  carregando = signal(true);
+  erro = signal<string | null>(null);
   exibirModal = false;
   modoEdicao = false;
-  servicoIdEdicao: number | null = null;
+  servicoIdEdicao: string | null = null;
+  salvando = false;
 
   servicoForm: FormGroup = this.fb.group({
     nome: ['', [Validators.required]],
     descricao: ['', [Validators.required]],
-    preco: ['', [Validators.required, Validators.min(0)]],
-    tempoEstimado: ['', [Validators.required]]
+    preco: [0, [Validators.required, Validators.min(0)]],
+    tempoEstimado: ['', [Validators.required]],
   });
 
-  abrirModalNovo() {
-    this.modoEdicao = false;
-    this.servicoIdEdicao = null;
-    this.servicoForm.reset();
+  ngOnInit(): void { this.carregar(); }
+  carregar(): void {
+    this.carregando.set(true);
+    this.erro.set(null);
+    this.service.obterServicos().subscribe({
+      next: lista => { this.servicos.set(lista); this.carregando.set(false); },
+      error: (e: Error) => { this.erro.set(e.message); this.carregando.set(false); },
+    });
+  }
+  abrirModalNovo(): void {
+    this.modoEdicao = false; this.servicoIdEdicao = null; this.servicoForm.reset({ preco: 0 });
     this.exibirModal = true;
   }
-
-  abrirModalEditar(servico: Servico) {
-    this.modoEdicao = true;
-    this.servicoIdEdicao = servico.id ?? null;
-    this.servicoForm.patchValue(servico);
-    this.exibirModal = true;
+  abrirModalEditar(servico: Servico): void {
+    this.modoEdicao = true; this.servicoIdEdicao = servico._id;
+    this.servicoForm.patchValue(servico); this.exibirModal = true;
   }
-
-  fecharModal() {
-    this.exibirModal = false;
+  fecharModal(): void { this.exibirModal = false; }
+  salvar(): void {
+    if (this.servicoForm.invalid || this.salvando) { this.servicoForm.markAllAsTouched(); return; }
+    const dados = this.servicoForm.getRawValue() as ServicoEntrada;
+    const chamada = this.modoEdicao && this.servicoIdEdicao
+      ? this.service.atualizarServico(this.servicoIdEdicao, dados)
+      : this.service.adicionarServico(dados);
+    this.salvando = true; this.erro.set(null);
+    chamada.subscribe({
+      next: () => { this.salvando = false; this.fecharModal(); this.carregar(); },
+      error: (e: Error) => { this.salvando = false; this.erro.set(e.message); },
+    });
   }
-
-  salvar() {
-    if (this.servicoForm.invalid) return;
-
-    const dados = this.servicoForm.value;
-    if (this.modoEdicao && this.servicoIdEdicao) {
-      this.servicosService.atualizarServico({ ...dados, id: this.servicoIdEdicao });
-    } else {
-      this.servicosService.adicionarServico(dados);
-    }
-
-    this.servicos.set(this.servicosService.obterServicos());
-    this.fecharModal();
-  }
-
-  excluir(id?: number) {
-    if (id && confirm('Deseja excluir este serviço?')) {
-      this.servicosService.excluirServico(id);
-      this.servicos.set(this.servicosService.obterServicos());
-    }
+  excluir(id: string): void {
+    if (!confirm('Deseja excluir este serviço?')) return;
+    this.service.excluirServico(id).subscribe({
+      next: () => this.carregar(),
+      error: (e: Error) => this.erro.set(e.message),
+    });
   }
 }

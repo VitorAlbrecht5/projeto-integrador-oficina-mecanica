@@ -6,7 +6,7 @@ export interface Veiculo {
   ano: number;
   defeitoRelatado: string;
   status: string;
-  clienteId: number;
+  clienteId: string;
   ativo: boolean;
   imagemUrl?: string;
 }

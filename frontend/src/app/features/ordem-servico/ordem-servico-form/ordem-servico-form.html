@@ -1,60 +1,71 @@
 <main class="formulario-pagina">
   <header class="formulario-header">
-      <h2>Editar ordem de serviço</h2>
+    <a class="link-voltar" routerLink="/painel/ordem-servico">← Voltar para ordens</a>
+    <div class="cabecalho-introducao">
+      <div>
+        <h2>{{ nova ? 'Novo atendimento' : (finalizada ? 'Detalhes da ordem finalizada' : 'Editar ordem de serviço') }}</h2>
+        <p>{{ nova ? 'Registre um novo atendimento para este veículo.' : 'Consulte os detalhes e atualize o andamento.' }}</p>
+      </div>
+      @if (!nova) { <span class="os-identificador">OS #{{ ordemId.slice(-6).toUpperCase() }}</span> }
+    </div>
   </header>
 
-  @if (carregando) { <div class="estado">Carregando dados da ordem...</div> }
+  @if (carregando || carregandoServicos) { <div class="estado">Carregando informações da ordem...</div> }
   @if (erro) { <div class="mensagem-erro" role="alert">{{ erro }}</div> }
-
-  @if (!carregando && !erro) {
+  @if (!carregando && !carregandoServicos) {
+    @if (finalizada) {
+      <div class="aviso-finalizada" role="status">Esta ordem foi finalizada e está no histórico. Para um novo atendimento do mesmo veículo, abra outra ordem.</div>
+    }
     <form [formGroup]="form" (ngSubmit)="salvar()" class="formulario-card">
       <section class="secao-formulario">
-        <h3>Informações do atendimento</h3>
+        <div class="secao-titulo">
+          <span class="secao-numero">01</span>
+          <div><h3>Dados do atendimento</h3><p>Registre as observações que o cliente poderá consultar pela placa. Evite dados pessoais.</p></div>
+        </div>
         <div class="campo">
-          <label for="descricaoProblema">Observação *</label>
-          <textarea id="descricaoProblema" rows="4" formControlName="descricaoProblema"
-            placeholder="Descreva o que foi observado ou realizado no veículo..."></textarea>
+          <label for="descricaoProblema">Observações do atendimento <span aria-hidden="true">*</span></label>
+          <textarea id="descricaoProblema" rows="4" formControlName="descricaoProblema" placeholder="Ex.: cliente relatou ruído no motor e pediu uma revisão" ></textarea>
           @if (form.controls.descricaoProblema.invalid && form.controls.descricaoProblema.touched) {
-            <small class="erro-campo">Informe uma observação (máximo de 500 caracteres).</small>
+            <small class="erro-campo">Informe as observações (máximo de 500 caracteres).</small>
           }
         </div>
-        <div class="campo">
-          <label for="status">Status do veículo *</label>
-          <select id="status" formControlName="status">
-            @for (status of statusDisponiveis; track status) {
-              <option [value]="status">{{ status }}</option>
-            }
-          </select>
-        </div>
+        @if (!nova) {
+          <div class="campo campo-status">
+            <label for="status">Andamento do atendimento</label>
+            <select id="status" formControlName="status">
+              @for (status of statusDisponiveis; track status) { <option [value]="status">{{ status }}</option> }
+            </select>
+            <small class="ajuda-campo">Ao salvar, o status do veículo é atualizado automaticamente na consulta pública. Você pode selecionar “Pronto” diretamente.</small>
+          </div>
+        }
       </section>
 
       <section class="secao-formulario">
         <div class="secao-titulo">
-          <div><h3>Serviços prestados</h3>
-            <p>Selecione os serviços realizados neste atendimento.</p></div>
+          <span class="secao-numero">02</span>
+          <div><h3>Serviços deste atendimento</h3><p>Selecione os serviços para registrar o que foi solicitado. Esta seleção é opcional.</p></div>
         </div>
         @if (servicos.length === 0) {
-          <p class="estado">Nenhum serviço cadastrado no momento.</p>
+          <div class="estado-vazio-servicos">Nenhum serviço cadastrado no catálogo. Você pode salvar esta ordem apenas com a descrição.</div>
         } @else {
           <div class="servicos-lista">
-            @for (servico of servicos; track servico.id) {
-              <label class="servico-item">
-                <input type="checkbox" [checked]="servico.id !== undefined && servicoSelecionado(servico.id)"
-                  (change)="servico.id !== undefined && alternarServico(servico.id, $any($event.target).checked)" />
+            @for (servico of servicos; track servico._id) {
+              <label class="servico-item" [class.servico-selecionado]="servicoSelecionado(servico._id)">
+                <input type="checkbox" [checked]="servicoSelecionado(servico._id)" [disabled]="finalizada" (change)="alternarServico(servico._id, $any($event.target).checked)" />
                 <span class="servico-info"><strong>{{ servico.nome }}</strong><small>{{ servico.descricao }} · {{ servico.tempoEstimado }}</small></span>
                 <strong class="preco">{{ servico.preco | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong>
               </label>
             }
           </div>
-          <div class="total-servicos"><span>Total dos serviços selecionados</span><strong>{{ valorTotal | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong></div>
+          <div class="total-servicos"><span>Valor estimado dos serviços selecionados</span><strong>{{ valorTotal | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}</strong></div>
         }
       </section>
 
       <footer class="acoes-formulario">
-        <a routerLink="/painel/ordem-servico" class="btn-cancelar">Cancelar</a>
-        <button type="submit" class="btn-salvar" [disabled]="salvando">
-          {{ salvando ? 'Salvando...' : 'Salvar alterações' }}
-        </button>
+        <a routerLink="/painel/ordem-servico" class="btn-cancelar">{{ finalizada ? 'Voltar ao histórico' : 'Cancelar' }}</a>
+        @if (!finalizada) {
+          <button type="submit" class="btn-salvar" [disabled]="salvando">{{ salvando ? 'Salvando...' : (nova ? 'Iniciar atendimento' : 'Salvar alterações') }}</button>
+        }
       </footer>
     </form>
   }

@@ -43,6 +43,7 @@ export const routes: Routes = [
         children: [
           { path: '', component: OrdemServicoLista, title: 'Ordens de Serviço' },
           { path: 'editar/:id', component: OrdemServicoForm, title: 'Editar Ordem de Serviço' },
+          { path: 'nova/:veiculoId', component: OrdemServicoForm, title: 'Nova Ordem de Serviço' },
         ],
       },
       {

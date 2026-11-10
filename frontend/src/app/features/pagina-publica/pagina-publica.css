@@ -622,3 +622,50 @@
         font-size: 12px;
     }
 }
+/* Complementos do atendimento — preserva a linha do tempo original */
+.informacoes-atendimento {
+    margin-top: 24px;
+    padding: 18px;
+    background: var(--cor-superficie);
+    border: 1px solid var(--cor-borda);
+    border-radius: 12px;
+    text-align: left;
+}
+.informacoes-atendimento h3 {
+    margin: 0 0 12px;
+    color: var(--cor-primaria);
+    font-size: 18px;
+}
+.informacoes-atendimento .observacao {
+    margin: 0;
+    white-space: pre-line;
+}
+.servicos-publicos {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.servicos-publicos li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--cor-borda);
+}
+.servicos-publicos li span { overflow-wrap: anywhere; }
+.servicos-publicos li strong { white-space: nowrap; }
+.total-publico {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    margin-top: 14px;
+    font-size: 16px;
+    font-weight: 600;
+}
+.total-publico strong { color: var(--cor-primaria); white-space: nowrap; }
+.nota-valores { font-size: 12px; color: var(--cor-texto-secundario); margin: 12px 0 0; }
+@media (max-width: 500px) {
+    .servicos-publicos li, .total-publico { gap: 12px; }
+    .informacoes-atendimento { padding: 14px; }
+}

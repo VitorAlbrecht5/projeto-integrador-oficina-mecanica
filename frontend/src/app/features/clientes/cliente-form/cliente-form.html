@@ -1,6 +1,8 @@
 <div class="container-form">
   <h2>{{ modoEdicao ? 'Editar Cliente' : 'Novo Cadastro de Cliente' }}</h2>
 
+  @if (erro) { <p class="error" role="alert">{{ erro }}</p> }
+  @if (carregando) { <p>Carregando os dados do cliente...</p> }
   <form [formGroup]="clienteForm" (ngSubmit)="salvar()">
     
     <!-- Dados Pessoais -->
@@ -118,7 +120,7 @@
     <!-- Botões -->
     <div class="form-actions">
       <a routerLink="/painel/cliente" class="btn-cancelar">Cancelar</a>
-      <button type="submit" class="btn-salvar">Salvar Cliente</button>
+      <button type="submit" class="btn-salvar" [disabled]="salvando || carregando">{{ salvando ? 'Salvando...' : 'Salvar Cliente' }}</button>
     </div>
 
   </form>
