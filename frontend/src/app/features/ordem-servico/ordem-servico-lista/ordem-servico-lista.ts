@@ -29,6 +29,17 @@ export class OrdemServicoLista implements OnInit {
   veiculoEscolhido = '';
   busca = '';
   filtro = 'todos';
+  readonly limiteEmAndamento = signal(6);
+  readonly limiteHistorico = signal(6);
+
+  get emAndamentoVisiveis(): OrdemServicoExibicao[] { return this.emAndamento.slice(0, this.limiteEmAndamento()); }
+  get historicoVisivel(): OrdemServicoExibicao[] { return this.historico.slice(0, this.limiteHistorico()); }
+  carregarMaisEmAndamento(): void { this.limiteEmAndamento.update(qtd => qtd + 6); }
+  carregarMaisHistorico(): void { this.limiteHistorico.update(qtd => qtd + 6); }
+  mudarBusca(texto: string): void { this.busca = texto; this.reiniciarPaginacao(); }
+  mudarFiltro(status: string): void { this.filtro = status; this.reiniciarPaginacao(); }
+  private reiniciarPaginacao(): void { this.limiteEmAndamento.set(6); this.limiteHistorico.set(6); }
+
 
   get emAndamento(): OrdemServicoExibicao[] { return this.filtrar(this.ordens().filter(o => o.status !== 'Pronto')); }
   get historico(): OrdemServicoExibicao[] { return this.filtrar(this.ordens().filter(o => o.status === 'Pronto')); }
@@ -54,7 +65,7 @@ export class OrdemServicoLista implements OnInit {
 
   ngOnInit(): void { this.carregarOrdens(); }
   carregarOrdens(): void {
-    this.carregando.set(true); this.erro.set(null);
+    this.carregando.set(true); this.erro.set(null); this.reiniciarPaginacao();
     forkJoin({
       ordens: this.service.listar(),
       veiculos: this.veiculosService.listar(),

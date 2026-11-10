@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { ClienteService } from '../cliente.service';
@@ -16,12 +16,17 @@ export class ClienteLista implements OnInit {
   readonly clientes = signal<Cliente[]>([]);
   readonly carregando = signal(true);
   readonly erro = signal<string | null>(null);
+  readonly quantidadeVisivel = signal(10);
+  readonly clientesVisiveis = computed(() => this.clientes().slice(0, this.quantidadeVisivel()));
+
+  carregarMais(): void { this.quantidadeVisivel.update(qtd => qtd + 10); }
 
   ngOnInit() { this.carregar(); }
 
   carregar() {
     this.carregando.set(true);
     this.erro.set(null);
+    this.quantidadeVisivel.set(10);
     this.clienteService.carregarClientes().subscribe({
       next: lista => { this.clientes.set(lista); this.carregando.set(false); },
       error: (erro: Error) => { this.erro.set(erro.message); this.carregando.set(false); },

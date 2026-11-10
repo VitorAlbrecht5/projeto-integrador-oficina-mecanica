@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ServicosService } from '../servicos.service';
@@ -17,6 +17,10 @@ export class ServicosLista implements OnInit {
   servicos = signal<Servico[]>([]);
   carregando = signal(true);
   erro = signal<string | null>(null);
+  readonly quantidadeVisivel = signal(10);
+  readonly servicosVisiveis = computed(() => this.servicos().slice(0, this.quantidadeVisivel()));
+
+  carregarMais(): void { this.quantidadeVisivel.update(qtd => qtd + 10); }
   exibirModal = false;
   modoEdicao = false;
   servicoIdEdicao: string | null = null;
@@ -33,6 +37,7 @@ export class ServicosLista implements OnInit {
   carregar(): void {
     this.carregando.set(true);
     this.erro.set(null);
+    this.quantidadeVisivel.set(10);
     this.service.obterServicos().subscribe({
       next: lista => { this.servicos.set(lista); this.carregando.set(false); },
       error: (e: Error) => { this.erro.set(e.message); this.carregando.set(false); },

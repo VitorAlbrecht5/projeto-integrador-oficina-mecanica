@@ -13,7 +13,7 @@
       <table class="tabela-clientes">
         <thead><tr><th>Nome Completo</th><th>CPF</th><th>Telefone</th><th>Cidade/UF</th><th>Ações</th></tr></thead>
         <tbody>
-          @for (cliente of clientes(); track cliente._id) {
+          @for (cliente of clientesVisiveis(); track cliente._id) {
             <tr>
               <td><strong>{{ cliente.nomeCompleto }}</strong></td>
               <td>{{ cliente.cpf }}</td>
@@ -27,6 +27,12 @@
           }
         </tbody>
       </table>
+    </div>
+    <div class="carregar-mais-area">
+      <span class="carregar-mais-contagem">Exibindo {{ clientesVisiveis().length }} de {{ clientes().length }} clientes</span>
+      @if (clientesVisiveis().length < clientes().length) {
+        <button type="button" class="btn-carregar-mais" (click)="carregarMais()">Carregar mais clientes</button>
+      }
     </div>
   }
 </div>

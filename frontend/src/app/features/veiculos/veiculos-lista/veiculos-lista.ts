@@ -22,6 +22,7 @@ export class VeiculosListaComponent implements OnInit {
   readonly erroAoCarregar = signal<string | null>(null);
   readonly termoBusca = signal('');
   readonly filtroSituacao = signal<'ativos' | 'inativos' | 'todos'>('ativos');
+  readonly quantidadeVisivel = signal(9);
 
   readonly veiculosFiltrados = computed(() => {
     const termo = this.termoBusca().trim().toLowerCase();
@@ -36,6 +37,19 @@ export class VeiculosListaComponent implements OnInit {
     });
   });
 
+  readonly veiculosVisiveis = computed(() =>
+    this.veiculosFiltrados().slice(0, this.quantidadeVisivel())
+  );
+
+  carregarMais(): void {
+    this.quantidadeVisivel.update(qtd => qtd + 9);
+  }
+
+  alterarFiltroSituacao(valor: 'ativos' | 'inativos' | 'todos'): void {
+    this.filtroSituacao.set(valor);
+    this.quantidadeVisivel.set(9);
+  }
+
   ngOnInit() {
     this.carregarVeiculos();
     this.clienteService.carregarClientes().subscribe({
@@ -47,6 +61,7 @@ export class VeiculosListaComponent implements OnInit {
   carregarVeiculos() {
     this.carregando.set(true);
     this.erroAoCarregar.set(null);
+    this.quantidadeVisivel.set(9);
     this.veiculosService.listar().subscribe({
       next: veiculos => { this.veiculos.set(veiculos); this.carregando.set(false); },
       error: (erro: Error) => { this.erroAoCarregar.set(erro.message); this.carregando.set(false); },
@@ -55,6 +70,7 @@ export class VeiculosListaComponent implements OnInit {
 
   aoDigitarBusca(evento: Event) {
     this.termoBusca.set((evento.target as HTMLInputElement).value);
+    this.quantidadeVisivel.set(9);
   }
 
   nomeCliente(id: string) {

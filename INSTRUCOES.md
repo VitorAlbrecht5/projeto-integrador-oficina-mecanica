@@ -1,4 +1,4 @@
-# Garagem Pro — ajustes de interface e observações públicas
+# Garagem Pro - ajustes de interface e observações públicas
 
 ## Alterações
 

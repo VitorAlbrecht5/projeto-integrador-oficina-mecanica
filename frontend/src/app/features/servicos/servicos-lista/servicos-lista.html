@@ -23,7 +23,7 @@
       </tr>
     </thead>
     <tbody>
-      @for (s of servicos(); track s._id) {
+      @for (s of servicosVisiveis(); track s._id) {
       <tr>
         <td><strong>{{ s.nome }}</strong></td>
         <td>{{ s.descricao }}</td>
@@ -52,6 +52,15 @@
       }
     </tbody>
   </table>
+
+  @if (!carregando() && !erro() && servicos().length > 0) {
+    <div class="carregar-mais-area">
+      <span class="carregar-mais-contagem">Exibindo {{ servicosVisiveis().length }} de {{ servicos().length }} serviços</span>
+      @if (servicosVisiveis().length < servicos().length) {
+        <button type="button" class="btn-carregar-mais" (click)="carregarMais()">Carregar mais serviços</button>
+      }
+    </div>
+  }
 
   <!-- Modal de Formulário -->
   @if (exibirModal) {
