@@ -11,7 +11,12 @@ import {
 import { VeiculosService } from './veiculos.service';
 import { CriarVeiculoDto } from './dto/criar-veiculo.dto';
 import { AtualizarVeiculoDto } from './dto/atualizar-veiculo.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Perfis } from '../auth/decorators/perfis.decorator';
 
+@ApiTags('Veículos')
+@ApiBearerAuth()
+@Perfis('admin')
 @Controller('veiculos')
 export class VeiculosController {
   constructor(private readonly veiculosService: VeiculosService) {}

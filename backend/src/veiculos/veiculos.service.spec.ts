@@ -106,17 +106,27 @@ describe('VeiculosService', () => {
     );
   });
 
-  it('deve remover um veículo', async () => {
-    mockVeiculoModel.findByIdAndDelete.mockReturnValue({
-      exec: jest.fn().mockImplementation(() => veiculoMock),
+  it('deve desativar um veículo sem apagar seu registro', async () => {
+    mockVeiculoModel.findByIdAndUpdate.mockReturnValue({
+      exec: jest.fn().mockImplementation(() => ({
+        ...veiculoMock,
+        ativo: false,
+      })),
     });
 
     const resultado = await service.remover('123');
 
     expect(resultado).toEqual({
-      mensagem: 'Veículo removido com sucesso.',
+      mensagem: 'Veículo desativado com sucesso.',
     });
-    expect(mockVeiculoModel.findByIdAndDelete).toHaveBeenCalledWith('123');
+
+    expect(mockVeiculoModel.findByIdAndUpdate).toHaveBeenCalledWith(
+      '123',
+      { ativo: false },
+      { new: true, runValidators: true },
+    );
+
+    expect(mockVeiculoModel.findByIdAndDelete).not.toHaveBeenCalled();
   });
 
   it('deve lançar erro ao buscar um veículo inexistente', async () => {
@@ -127,8 +137,8 @@ describe('VeiculosService', () => {
     await expect(service.buscarPorId('999')).rejects.toThrow(NotFoundException);
   });
 
-  it('deve lançar erro ao remover um veículo inexistente', async () => {
-    mockVeiculoModel.findByIdAndDelete.mockReturnValue({
+  it('deve lançar erro ao desativar um veículo inexistente', async () => {
+    mockVeiculoModel.findByIdAndUpdate.mockReturnValue({
       exec: jest.fn().mockImplementation(() => null),
     });
 
@@ -171,5 +181,16 @@ describe('VeiculosService', () => {
     await expect(service.criar(dados)).rejects.toThrow(BadRequestException);
 
     expect(mockVeiculoModel.create).not.toHaveBeenCalled();
+  });
+  it('deve impedir a troca da placa de um veículo cadastrado', async () => {
+    mockVeiculoModel.findById.mockReturnValue({
+      exec: jest.fn().mockImplementation(() => veiculoMock),
+    });
+
+    await expect(
+      service.atualizar('123', { placa: 'XYZ9876' }),
+    ).rejects.toThrow(BadRequestException);
+
+    expect(mockVeiculoModel.findByIdAndUpdate).not.toHaveBeenCalled();
   });
 });

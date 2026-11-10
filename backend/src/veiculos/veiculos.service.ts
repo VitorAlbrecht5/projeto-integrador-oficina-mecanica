@@ -9,6 +9,7 @@ import { Model } from 'mongoose';
 import { Veiculo } from './schemas/veiculo.schema';
 import { CriarVeiculoDto } from './dto/criar-veiculo.dto';
 import { AtualizarVeiculoDto } from './dto/atualizar-veiculo.dto';
+import { normalizarPlaca } from './normalizar-placa';
 
 @Injectable()
 export class VeiculosService {
@@ -49,7 +50,17 @@ export class VeiculosService {
 
   // Atualiza um veículo
   async atualizar(id: string, dados: AtualizarVeiculoDto) {
-    await this.buscarPorId(id);
+    const atual = await this.buscarPorId(id);
+
+    if (
+      dados.placa !== undefined &&
+      normalizarPlaca(dados.placa) !== normalizarPlaca(atual.placa)
+    ) {
+      throw new BadRequestException(
+        'A placa do veículo não pode ser alterada.',
+      );
+    }
+
     this.validarAno(dados.ano);
 
     try {
@@ -67,15 +78,22 @@ export class VeiculosService {
     }
   }
 
-  // Remove um veículo
   async remover(id: string) {
-    const veiculo = await this.veiculoModel.findByIdAndDelete(id).exec();
+    const veiculo = await this.veiculoModel
+      .findByIdAndUpdate(
+        id,
+        { ativo: false },
+        { new: true, runValidators: true },
+      )
+      .exec();
 
     if (!veiculo) {
       throw new NotFoundException('Veículo não encontrado.');
     }
 
-    return { mensagem: 'Veículo removido com sucesso.' };
+    return {
+      mensagem: 'Veículo desativado com sucesso.',
+    };
   }
 
   // Valida o ano de fabricação

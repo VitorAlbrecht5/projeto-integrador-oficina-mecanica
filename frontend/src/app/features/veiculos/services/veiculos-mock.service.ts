@@ -12,12 +12,13 @@ export class VeiculosMockService implements VeiculosService {
     {
       _id: '1',
       placa: 'ABC1234',
-      modelo: 'Gol',
-      cor: 'Branco',
+      modelo: 'Vectra',
+      cor: 'Prata',
       ano: 2015,
       defeitoRelatado: 'Motor falhando',
       status: 'Veículo recebido - Aguardando Avaliação',
       clienteId: 1,
+      imagemUrl: 'https://autoentusiastas.com.br/ae/wp-content/uploads/2020/04/Vectra-25.jpg',
       ativo: true,
     },
     {
@@ -34,7 +35,7 @@ export class VeiculosMockService implements VeiculosService {
     },
     {
       _id: '3',
-      placa: 'DEFF5678',
+      placa: 'DEF5678',
       modelo: 'Onix',
       cor: 'Prata',
       ano: 2022,
