@@ -153,11 +153,6 @@ O relatório de cobertura fica em `backend/coverage/lcov-report/index.html`. O P
 
 Na pasta `frontend`, execute `npm run build` para verificar o build de produção.
 
-## Limitações conhecidas e próximos passos
-
-- O catálogo permite exclusão definitiva. O próximo passo é preservar serviços já vinculados a ordens e seus valores no histórico.
-- A validação do tempo de resposta da consulta por placa em rede móvel está pendente.
-- O build de produção ainda exige um ajuste no tamanho do CSS da página pública. O lint do back-end aponta um import sem uso no seed.
 
 ## Respostas às perguntas de verificação do manual
 
