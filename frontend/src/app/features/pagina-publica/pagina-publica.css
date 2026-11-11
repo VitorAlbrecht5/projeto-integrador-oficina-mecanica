@@ -57,6 +57,7 @@
     gap: 8px;
     padding: 10px 16px;
     border-radius: 50px;
+    color: var(--cor-texto-claro);
     font-size: 14px;
     font-weight: 600;
     text-decoration: none;
@@ -70,16 +71,9 @@
     flex-shrink: 0;
 }
 
-.icone-whatsapp {
-    width: 20px;
-    height: 20px;
-    flex-shrink: 0;
-}
-
 /* WhatsApp */
 .botao-whatsapp {
     background-color: #218739;
-    color: var(--cor-texto-claro);
 }
 
 .botao-whatsapp:hover {
@@ -89,19 +83,6 @@
 /* Login */
 .botao-login {
     background-color: var(--cor-destaque);
-    color: var(--cor-texto-claro);
-}
-
-.botao-login:hover {
-    background-color: var(--cor-destaque-hover);
-}
-
-/* Cabeçalho em telas pequenas */
-@media (max-width: 700px) {
-    .botoes-cabecalho {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
 }
 
 /* Conteúdo principal */
@@ -187,10 +168,6 @@
 }
 
 .icone-carregando svg {
-    width: 42px;
-    height: 42px;
-    margin-bottom: 12px;
-    color: var(--cor-destaque);
     animation: girar-carregamento 0.9s linear infinite;
 }
 
@@ -215,12 +192,6 @@
     color: var(--cor-texto);
 }
 
-.resultado h2 {
-    margin: 0 0 20px;
-    color: var(--cor-primaria);
-    text-align: center;
-}
-
 .resultado p {
     margin: 12px 0;
     color: var(--cor-texto);
@@ -231,17 +202,6 @@
 }
 
 /* Resultado encontrado */
-.resultado-sucesso {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    width: 100%;
-}
-
-.resultado-sucesso h2 {
-    text-align: center;
-}
-
 .imagem-veiculo {
     width: 100%;
     max-width: 500px;
@@ -301,13 +261,14 @@
 }
 
 .resultado .observacao {
-    margin-top: 8px;
+    margin: 0;
     padding: 14px;
     border: 1px solid var(--cor-borda);
     border-radius: var(--raio-padrao);
     background-color: var(--cor-superficie);
     font-style: italic;
     overflow-wrap: anywhere;
+    white-space: pre-line;
 }
 
 /* Resultado não encontrado */
@@ -328,22 +289,6 @@
     height: 42px;
     margin-bottom: 12px;
     color: var(--cor-erro);
-}
-
-/* Ajustes para celular */
-@media (max-width: 700px) {
-    .resultado {
-        padding: 18px;
-    }
-
-    .resultado-sucesso {
-        align-items: stretch;
-    }
-
-    .resultado .situacao {
-        margin-left: 0;
-        margin-top: 6px;
-    }
 }
 
 /* Sobre */
@@ -393,9 +338,15 @@
 
 /* Responsividade */
 @media (max-width: 700px) {
-    .cabecalho {
+
+    .cabecalho,
+    .menu,
+    .botoes-cabecalho {
         flex-wrap: wrap;
         justify-content: center;
+    }
+
+    .cabecalho {
         padding: 20px;
     }
 
@@ -404,8 +355,6 @@
     }
 
     .menu {
-        flex-wrap: wrap;
-        justify-content: center;
         gap: 14px;
     }
 
@@ -417,8 +366,14 @@
         font-size: 26px;
     }
 
-    .consulta {
+    .consulta,
+    .resultado {
         padding: 18px;
+    }
+
+    .resultado .situacao {
+        margin-left: 0;
+        margin-top: 6px;
     }
 
     .campo-pesquisa {
@@ -534,17 +489,6 @@
     color: var(--cor-destaque);
 }
 
-.etapa-status {
-    display: inline-block;
-    margin-top: 8px;
-    padding: 4px 10px;
-    border-radius: 50px;
-    background-color: #e5f2fb;
-    color: var(--cor-destaque);
-    font-size: 12px;
-    font-weight: 700;
-}
-
 /* Ajustes para telas pequenas */
 @media (max-width: 480px) {
     .linha-tempo>h3 {
@@ -565,19 +509,17 @@
 @media (min-width: 701px) {
     .linha-tempo {
         width: 100%;
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        column-gap: 12px;
     }
 
     .linha-tempo>h3 {
         margin-bottom: 30px;
+        grid-column: 1 / -1;
     }
 
-    .linha-tempo {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .linha-tempo .etapa {
-        flex: 1;
+    .etapa {
         flex-direction: column;
         align-items: center;
         text-align: center;
@@ -585,19 +527,8 @@
         gap: 12px;
     }
 
-    /* Organiza as etapas em uma linha horizontal */
-    .linha-tempo {
-        display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        column-gap: 12px;
-    }
-
-    .linha-tempo>h3 {
-        grid-column: 1 / -1;
-    }
-
     /* Linha conectando os pontos */
-    .linha-tempo .etapa:not(:last-child)::after {
+    .etapa:not(:last-child)::after {
         top: 17px;
         left: calc(50% + 17px);
         bottom: auto;
@@ -606,19 +537,15 @@
         transform: none;
     }
 
-    .linha-tempo .etapa-ponto {
-        flex: 0 0 34px;
-    }
-
-    .linha-tempo .etapa-conteudo {
+    .etapa-conteudo {
         width: 100%;
     }
 
-    .linha-tempo .etapa-conteudo h4 {
+    .etapa-conteudo h4 {
         font-size: 14px;
     }
 
-    .linha-tempo .etapa-conteudo p {
+    .etapa-conteudo p {
         font-size: 12px;
     }
 }
@@ -637,11 +564,6 @@
     margin: 0 0 12px;
     color: var(--cor-primaria);
     font-size: 18px;
-}
-
-.informacoes-atendimento .observacao {
-    margin: 0;
-    white-space: pre-line;
 }
 
 .servicos-publicos {
@@ -663,7 +585,8 @@
     overflow-wrap: anywhere;
 }
 
-.servicos-publicos li strong {
+.servicos-publicos li strong,
+.total-publico strong {
     white-space: nowrap;
 }
 
@@ -674,11 +597,6 @@
     margin-top: 14px;
     font-size: 16px;
     font-weight: 600;
-}
-
-.total-publico strong {
-    color: var(--cor-primaria);
-    white-space: nowrap;
 }
 
 .nota-valores {

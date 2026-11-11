@@ -8,10 +8,7 @@ import { Model, Types } from 'mongoose';
 import { AppModule } from '../app.module';
 import { Usuario } from '../usuarios/schemas/usuario.schema';
 import { Cliente } from '../clientes/schemas/cliente.schema';
-import {
-  Veiculo,
-  type StatusVeiculo,
-} from '../veiculos/schemas/veiculo.schema';
+import { Veiculo } from '../veiculos/schemas/veiculo.schema';
 import { Servico } from '../servicos/servico.schema';
 import {
   OrdemServico,

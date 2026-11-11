@@ -167,5 +167,7 @@ Cada integrante registra as respostas do seu módulo em `docs/respostas-<nome>.m
 
 - [Documento de Visão](docs/documento-de-visao.pdf) e [wireframe da consulta pública](docs/wireframe.jpg).
 - [Contrato da API](docs/contrato-api.md) e [Plano de Testes](docs/plano-de-testes.docx).
-- [Manual do Usuário em revisão](docs/manual-usuario.md).
+- [Manual do Usuário](docs/manual-do-usuario.docx).
+- [Dicionário de Dados](docs/dicionario-de-dados.docx).
+- [Roteiro da Apresentação](docs/roteiro-da-apresentacao.docx).
 - [COMECE-AQUI.md](COMECE-AQUI.md), [guia do professor](guia/) e [orientações de contribuição](CONTRIBUTING.md).
