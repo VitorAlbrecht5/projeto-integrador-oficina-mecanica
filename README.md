@@ -1,4 +1,4 @@
-# Garagem Pro — Projeto Integrador Sprint 5
+# Garagem Pro — Projeto Integrador
 
 **Grupo 3 · Oficina Mecânica · Programador Full-Stack · SENAI · 2026**
 
